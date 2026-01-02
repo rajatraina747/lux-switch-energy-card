@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.3.0 (2026-01-02)
+
+### 🚀 New Features
+- **Voltage & Current Support**: Native monitoring for Voltage (V) and Current (A) sensors, integrated into the details modal.
+- **Enhanced Sparkline**: Added a slick linear gradient fill to the power graph for better depth and legibility.
+
+### 💎 UX & Design
+- **Scroll Protection**: Decoupled the switch toggle from the card body. The switch now only toggles when the bulb icon is explicitly pressed, preventing accidental toggles during scrolling.
+- **Clean UI**: Removed the "STALE DATA" chip to keep the interface focused on real-time metrics.
+- **Reactive Glow**: Finalized the dynamic lamp glow scaling based on real-time wattage.
+
+### ⚙️ GUI Editor Overhaul
+- **Professional Categories**: Redesigned the editor into logical sections: Core Entities, Monitoring Sensors, Visuals & Glassmorphism, and Sparkline Chart.
+- **Enhanced UX**: Added feature icons, improved grid layouts for sensors, and real-time value tags for visual settings.
+
 ## v1.2.0-beta.1 (2026-01-02)
 
 ### 🚀 New Features

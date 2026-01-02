@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styles } from './styles';
 import { LuxSwitchEnergyCardConfig, PowerSample, ModeItem, ActionConfig } from './types';
@@ -35,6 +35,7 @@ export class LuxSwitchEnergyCard extends LitElement {
     @state() private _autoOffDisabled = false;
     @state() private _lastOnTime: number | null = null;
     @state() private _lastOffTime: number | null = null;
+    @state() private _warmingUp = false;
 
     static get styles() {
         return styles;
@@ -112,6 +113,22 @@ export class LuxSwitchEnergyCard extends LitElement {
 
         if (this._config.sparkline?.enabled && this._config.power_entity) {
             this.startPowerSampling();
+        }
+    }
+
+    protected updated(changedProperties: PropertyValues): void {
+        super.updated(changedProperties);
+        if (changedProperties.has('hass')) {
+            const oldHass = changedProperties.get('hass') as any;
+            const oldState = oldHass ? oldHass.states[this._config.entity]?.state : undefined;
+            const newState = this.hass.states[this._config.entity]?.state;
+
+            if (oldState === 'off' && newState === 'on') {
+                this._warmingUp = true;
+                setTimeout(() => {
+                    this._warmingUp = false;
+                }, 1000); // 1s organic slow fade
+            }
         }
     }
 
@@ -201,6 +218,14 @@ export class LuxSwitchEnergyCard extends LitElement {
         return this._config.cost_today_entity ? this.hass.states[this._config.cost_today_entity] : null;
     }
 
+    private getVoltageEntity() {
+        return this._config.voltage_entity ? this.hass.states[this._config.voltage_entity] : null;
+    }
+
+    private getCurrentEntity() {
+        return this._config.current_entity ? this.hass.states[this._config.current_entity] : null;
+    }
+
     private isOn(): boolean {
         const entity = this.getSwitchEntity();
         return entity?.state === 'on';
@@ -218,6 +243,24 @@ export class LuxSwitchEnergyCard extends LitElement {
         }
         const power = parseFloat(entity.state);
         return isNaN(power) ? null : power;
+    }
+
+    private getVoltage(): number | null {
+        const entity = this.getVoltageEntity();
+        if (!entity || entity.state === 'unavailable' || entity.state === 'unknown') {
+            return null;
+        }
+        const voltage = parseFloat(entity.state);
+        return isNaN(voltage) ? null : voltage;
+    }
+
+    private getCurrent(): number | null {
+        const entity = this.getCurrentEntity();
+        if (!entity || entity.state === 'unavailable' || entity.state === 'unknown') {
+            return null;
+        }
+        const current = parseFloat(entity.state);
+        return isNaN(current) ? null : current;
     }
 
     private formatNumber(value: number | null, decimals: number = 2): string {
@@ -424,56 +467,74 @@ export class LuxSwitchEnergyCard extends LitElement {
         if (!this._showModal) return html``;
 
         const power = this.getPower();
+        const voltage = this.getVoltage();
+        const current = this.getCurrent();
         const energyToday = this.getEnergyTodayEntity();
         const costToday = this.getCostTodayEntity();
         const timeInfo = this.getTimeDisplay();
 
         return html`
-      <div class="modal" @click=${(e: Event) => {
+    <div class="modal" @click=${(e: Event) => {
                 if (e.target === e.currentTarget) this._showModal = false;
             }}>
-        <div class="modal-content">
-          <div class="modal-header">
+    <div class="modal-content">
+        <div class="modal-header">
             <h3 class="modal-title">${this._config.name || 'Light Details'}</h3>
-            <button class="close-button" @click=${() => this._showModal = false}>×</button>
-          </div>
-          
-          <div class="expanded-stats">
-            <div class="stat-item">
-              <div class="stat-value">${this.formatNumber(power, this._config.decimals?.power || 0)} W</div>
-              <div class="stat-label">${localize('modal.current_power')}</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">${this.formatNumber(this._sessionEnergy, this._config.decimals?.energy || 2)} Wh</div>
-              <div class="stat-label">${localize('modal.session_energy')}</div>
-            </div>
+                <button class="close-button" @click=${() => this._showModal = false}>×</button>
+                    </div>
+
+                    <div class="expanded-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${this.formatNumber(power, this._config.decimals?.power || 0)} W</div>
+                                <div class="stat-label">${localize('modal.current_power')}</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${this.formatNumber(this._sessionEnergy, this._config.decimals?.energy || 2)} Wh</div>
+                                            <div class="stat-label">${localize('modal.session_energy')}</div>
+                                                </div>
+            ${voltage !== null ? html`
+              <div class="stat-item">
+                <div class="stat-value">${this.formatNumber(voltage, 1)} V</div>
+                <div class="stat-label">Voltage</div>
+              </div>
+            ` : ''}
+            ${current !== null ? html`
+              <div class="stat-item">
+                <div class="stat-value">${this.formatNumber(current, 2)} A</div>
+                <div class="stat-label">Current</div>
+              </div>
+            ` : ''}
             ${energyToday && energyToday.state !== 'unavailable' ? html`
               <div class="stat-item">
                 <div class="stat-value">${this.formatNumber(parseFloat(energyToday.state), this._config.decimals?.energy || 2)} kWh</div>
                 <div class="stat-label">${localize('card.today')}</div>
               </div>
-            ` : ''}
+            ` : ''
+            }
             ${costToday && costToday.state !== 'unavailable' ? html`
               <div class="stat-item">
                 <div class="stat-value">${this.formatCurrency(parseFloat(costToday.state), this._config.currency_symbol)}</div>
                 <div class="stat-label">${localize('card.cost_today')}</div>
               </div>
-            ` : ''}
-          </div>
+            ` : ''
+            }
+</div>
 
-          <div class="sparkline-container" style="height: 80px;">
-            <lux-sparkline 
-                .samples=${this._powerSamples} 
+    <div class="sparkline-container" style="height: 80px;">
+        ${this._powerSamples.length > 0 ? html`
+        <lux-sparkline
+            .samples=${this._powerSamples} 
                 .config=${this._config.sparkline}
                 .accentColor=${`var(--lux-accent-gold)`}
             ></lux-sparkline>
-          </div>
+        ` : this.renderModalEmptyState(power)}
+    </div>
 
-          <div style="margin: 16px 0; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;">
-            <div style="font-size: 14px; color: var(--lux-text-muted); margin-bottom: 8px;">Time Info</div>
+    <div style="margin: 16px 0; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+        <div style="font-size: 14px; color: var(--lux-text-muted); margin-bottom: 8px;">Time Info</div>
             <div style="font-size: 16px; color: var(--lux-text-primary);">${timeInfo.primary}</div>
-            <div style="font-size: 14px; color: var(--lux-text-muted);">${timeInfo.secondary}</div>
-          </div>
+                <div style="font-size: 14px; color: var(--lux-text-muted);">${timeInfo.secondary}</div>
+                    </div>
 
           ${this._timerEndTime ? html`
             <div class="timer-display">
@@ -482,7 +543,8 @@ export class LuxSwitchEnergyCard extends LitElement {
                 ${localize('modal.cancel_timer')}
               </button>
             </div>
-          ` : ''}
+          ` : ''
+            }
 
           ${this._config.modes?.enabled && this._config.modes.items?.length ? html`
             <div style="margin-top: 24px;">
@@ -496,10 +558,11 @@ export class LuxSwitchEnergyCard extends LitElement {
                 `)}
               </div>
             </div>
-          ` : ''}
-        </div>
-      </div>
-    `;
+          ` : ''
+            }
+</div>
+    </div>
+        `;
     }
 
     private runMode(mode: ModeItem) {
@@ -526,9 +589,9 @@ export class LuxSwitchEnergyCard extends LitElement {
         if (!this._showToast) return html``;
 
         return html`
-      <div class="toast">
+    <div class="toast">
         ${this._toastMessage}
-      </div>
+</div>
     `;
     }
 
@@ -536,6 +599,9 @@ export class LuxSwitchEnergyCard extends LitElement {
     private _holdTimer: number | undefined;
 
     private _handleStart(e: Event) {
+        // Prevent interaction if unavailable
+        if (this.isUnavailable()) return;
+
         this._timer = Date.now();
         this._holdTimer = window.setTimeout(() => {
             this._handleHold();
@@ -549,12 +615,7 @@ export class LuxSwitchEnergyCard extends LitElement {
             this._holdTimer = undefined;
         }
 
-        if (this._timer) {
-            const duration = Date.now() - this._timer;
-            if (duration < 500) {
-                this._handleTap();
-            }
-        }
+        this._timer = undefined;
     }
 
 
@@ -609,6 +670,29 @@ export class LuxSwitchEnergyCard extends LitElement {
         }
     }
 
+
+
+    private renderModalEmptyState(power: number | null) {
+        const val = power || 0;
+        const max = this._config.anomaly_watts || 1200;
+        const pct = Math.min((val / max) * 100, 100);
+
+        return html`
+        <div class="empty-state-power" style="display: flex; flex-direction: column; justify-content: center; height: 100%; padding: 0 16px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--lux-text-muted);">
+                <span>Real-time Usage</span>
+                <span>${Math.round(pct)}% Load</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                <div style="width: ${pct}%; height: 100%; background: var(--lux-accent-gold); transition: width 0.3s ease;"></div>
+            </div>
+            <div style="text-align: center; margin-top: 8px; font-size: 10px; color: var(--lux-text-muted); opacity: 0.6;">
+                Collecting history data...
+            </div>
+        </div>
+        `;
+    }
+
     private renderBudget() {
         if (!this._config.budget?.enabled || !this._config.budget.limit) return html``;
 
@@ -633,21 +717,21 @@ export class LuxSwitchEnergyCard extends LitElement {
         const isExceeded = current > limit;
 
         return html`
-        <div style="margin-top: 16px; margin-bottom: 8px;">
-            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--lux-text-muted); margin-bottom: 4px;">
-                <span>Daily Budget</span>
+    <div style="margin-top: 16px; margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--lux-text-muted); margin-bottom: 4px;">
+            <span>Daily Budget</span>
                 <span>${current.toFixed(2)} / ${limit.toFixed(2)} ${unit}</span>
-            </div>
-            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
-                <div style="
-                    width: ${percent}%; 
-                    height: 100%; 
-                    background: ${isExceeded ? '#ef4444' : 'var(--lux-accent-gold)'};
-                    transition: width 0.5s ease;
-                "></div>
-            </div>
-        </div>
-      `;
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                        <div style="
+width: ${percent}%;
+height: 100%;
+background: ${isExceeded ? '#ef4444' : 'var(--lux-accent-gold)'};
+transition: width 0.5s ease;
+"></div>
+    </div>
+    </div>
+        `;
     }
 
     protected render() {
@@ -661,7 +745,6 @@ export class LuxSwitchEnergyCard extends LitElement {
         const costToday = this.getCostTodayEntity();
         const timeInfo = this.getTimeDisplay();
         const isUnavailable = this.isUnavailable();
-        const isStale = this.isDataStale();
 
         if (this.isOn() && this._sessionStartTime && power !== null) {
             const now = Date.now();
@@ -669,68 +752,105 @@ export class LuxSwitchEnergyCard extends LitElement {
             this._sessionEnergy = power * elapsedHours;
         }
 
+        // --- Dynamic Glow Calculation ---
+        let glowStyle = '';
+        if (this.isOn() && power !== null) {
+            const anomaly = this._config.anomaly_watts || 1200;
+            // Cap ratio at 1.0 (100% glow)
+            const ratio = Math.min(power / anomaly, 1.0);
+
+            // Base shadow (soft) + Dynamic spread/opacity
+            // We'll vary the second shadow layer: 0 0 ${10 + ratio*30}px ${color}
+            // And maybe push opacity slightly
+
+            // Actually, simply updating a CSS var is cleaner if we can bind it to style
+            // Let's modify the icon container style directly
+            // 0% load -> 15px glow
+            // 100% load -> 50px glow
+            const blurRadius = 15 + (ratio * 35);
+            const opacity = 0.4 + (ratio * 0.4); // 0.4 to 0.8
+
+            glowStyle = `filter: drop-shadow(0 0 ${blurRadius}px rgba(var(--accent-gold-rgb), ${opacity})); transition: filter 0.5s ease-out;`;
+        } else if (this.isOn()) {
+            // Default on state glow
+            glowStyle = `filter: drop-shadow(0 0 15px rgba(var(--accent-gold-rgb), 0.4)); transition: filter 0.5s ease-out;`;
+        }
+        // --------------------------------
+
         return html`
-      <div 
-        class="card ${this.isOn() ? 'on' : 'off'}"
-        @mousedown=${this._handleStart}
-        @touchstart=${this._handleStart}
-        @mouseup=${this._handleEnd}
-        @touchend=${this._handleEnd}
-        @keydown=${(e: KeyboardEvent) => {
+    <div
+class="card ${this.isOn() ? 'on' : 'off'} ${this._warmingUp ? 'warming' : ''}"
+@mousedown=${this._handleStart}
+@touchstart=${this._handleStart}
+@mouseup=${this._handleEnd}
+@touchend=${this._handleEnd}
+@keydown=${(e: KeyboardEvent) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     this._handleTap();
                 }
+            }
+            }
+tabindex="0"
+    >
+    <div class="header">
+        <div class="title-section">
+            <div class="icon-container" style="${glowStyle}" 
+                @click=${(e: Event) => { e.stopPropagation(); this._handleTap(); }}
+                @keydown=${(e: KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this._handleTap();
+                }
             }}
-        tabindex="0"
-      >
-        <div class="header">
-          <div class="title-section">
-            <div class="icon-container">
-              <svg class="light-icon" viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm2 11h-4v-1h4v1zm0-2h-4V8c0-1.1.9-2 2-2s2 .9 2 2v3z"/>
-              </svg>
-            </div>
-            <h2 class="name">${this._config.name || entity?.attributes?.friendly_name || 'Kitchen Light'}</h2>
-          </div>
-          <div class="status-chip ${isUnavailable ? 'unavailable' : isStale ? 'stale' : this.isOn() ? 'on' : ''}">
-            ${isUnavailable ? localize('common.unavailable') : isStale ? localize('common.stale') : this.isOn() ? localize('common.on') : localize('common.off')}
-          </div>
-        </div>
+                tabindex="0"
+            >
+                <svg class="light-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm2 11h-4v-1h4v1zm0-2h-4V8c0-1.1.9-2 2-2s2 .9 2 2v3z" />
+                        </svg>
+                        </div>
+                        <h2 class="name">${this._config.name || entity?.attributes?.friendly_name || 'Kitchen Light'}</h2>
+                            </div>
+                            <div class="status-chip ${isUnavailable ? 'unavailable' : this.isOn() ? 'on' : ''}">
+                                ${isUnavailable ? localize('common.unavailable') : this.isOn() ? localize('common.on') : localize('common.off')}
+</div>
+    </div>
 
-        <lux-power-flow 
-          .active=${this.isOn()} 
+    <lux-power-flow
+        .active=${this.isOn()} 
           .power=${power || 0}
         ></lux-power-flow>
 
-        <div class="sparkline-container">
-            <lux-sparkline 
-                .samples=${this._powerSamples} 
+    <div class="sparkline-container">
+        <lux-sparkline
+            .samples=${this._powerSamples} 
                 .config=${this._config.sparkline}
                 .accentColor=${`var(--lux-accent-gold)`}
             ></lux-sparkline>
-        </div>
+    </div>
 
-        <div class="energy-section">
-          <div class="energy-item">
+    <div class="energy-section">
+        <div class="energy-item">
             <div class="energy-value">
-              ${this.formatNumber(power !== null ? power : 0, this._config.decimals?.power || 0)} W
-            </div>
-            <div class="energy-label">${localize('card.live_power')}</div>
-          </div>
-          <div class="energy-item">
-            <div class="energy-value">
-              ${this.formatNumber(this._sessionEnergy, this._config.decimals?.energy || 2)} Wh
-            </div>
-            <div class="energy-label">${localize('card.session')}</div>
-          </div>
+                ${this.formatNumber(power !== null ? power : 0, this._config.decimals?.power || 0)} W
+                    </div>
+                    <div class="energy-label">${localize('card.live_power')}</div>
+                        </div>
+                        <div class="energy-item">
+                            <div class="energy-value">
+                                ${this.formatNumber(this._sessionEnergy, this._config.decimals?.energy || 2)} Wh
+                                    </div>
+                                    <div class="energy-label">${localize('card.session')}</div>
+                                        </div>
           ${energyToday && energyToday.state !== 'unavailable' ? html`
             <div class="energy-item">
               <div class="energy-value">
                 ${this.formatNumber(parseFloat(energyToday.state), this._config.decimals?.energy || 2)} kWh</div>
               <div class="energy-label">${localize('card.today')}</div>
             </div>
-          ` : ''}
+          ` : ''
+            }
           ${costToday && costToday.state !== 'unavailable' ? html`
             <div class="energy-item">
               <div class="energy-value">
@@ -738,23 +858,25 @@ export class LuxSwitchEnergyCard extends LitElement {
               </div>
               <div class="energy-label">${localize('card.cost_today')}</div>
             </div>
-          ` : ''}
-        </div>
+          ` : ''
+            }
+</div>
 
         ${this.renderBudget()}
 
-        <div class="time-section">
-          <div class="time-info">
-            <strong>${timeInfo.primary}</strong>
+<div class="time-section">
+    <div class="time-info">
+        <strong>${timeInfo.primary}</strong>
             ${timeInfo.secondary ? html`<br>${timeInfo.secondary}` : ''}
-          </div>
-        </div>
+</div>
+    </div>
 
         ${this._timerEndTime ? html`
           <div class="timer-display">
             <div class="timer-text">${localize('card.auto_off_in')}: ${this.getTimerDisplay()}</div>
           </div>
-        ` : ''}
+        ` : ''
+            }
 
         ${this._config.timers?.enabled && this.isOn() ? html`
           <div class="controls-section">
@@ -790,29 +912,24 @@ export class LuxSwitchEnergyCard extends LitElement {
               </button>
             `}
           </div>
-        ` : ''}
+        ` : ''
+            }
 
         ${power !== null && this._config.anomaly_watts && power > this._config.anomaly_watts ? html`
           <div class="status-chip anomaly" style="margin-top: 12px;">
             ${localize('card.high_power')}
           </div>
-        ` : ''}
-      </div>
+        ` : ''
+            }
+</div>
 
       ${this.renderModal()}
       ${this.renderToast()}
-    `;
+`;
     }
 
     private isDataStale(): boolean {
-        const entity = this.getPowerEntity() || this.getSwitchEntity();
-        if (!entity) return false;
-
-        const lastUpdated = new Date(entity.last_updated);
-        const now = new Date();
-        const staleSeconds = this._config.stale_seconds || 120;
-
-        return (now.getTime() - lastUpdated.getTime()) > (staleSeconds * 1000);
+        return false; // Removed per user request v1.3.0
     }
 
     getCardSize() {
@@ -820,13 +937,6 @@ export class LuxSwitchEnergyCard extends LitElement {
     }
 }
 
-// Register the card
-(window as any).customCards = (window as any).customCards || [];
-(window as any).customCards.push({
-    type: 'lux-switch-energy-card',
-    name: 'Luxury Switch Energy Card',
-    description: 'A premium glassmorphic switch card with energy monitoring'
-});
 
 declare global {
     interface HTMLElementTagNameMap {

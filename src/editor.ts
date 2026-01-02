@@ -56,114 +56,114 @@ export class LuxSwitchEnergyCardEditor extends LitElement {
         return html`
             <div class="card-config">
                 <div class="section">
-                    <div class="label">Core Entities</div>
+                    <div class="header-row">
+                        <ha-icon icon="mdi:form-select"></ha-icon>
+                        <div class="label">Core Entities</div>
+                    </div>
                     <ha-entity-picker
                         .hass=${this.hass}
                         .value=${this._config.entity}
                         .configValue=${'entity'}
                         @value-changed=${this._valueChanged}
-                        label="Switch Entity (Required)"
+                        label="Primary Switch (Required)"
                         allow-custom-entity
                     ></ha-entity-picker>
+                </div>
+
+                <div class="section">
+                    <div class="header-row">
+                        <ha-icon icon="mdi:chart-timeline-variant"></ha-icon>
+                        <div class="label">Monitoring Sensors</div>
+                    </div>
                     <ha-entity-picker
                         .hass=${this.hass}
                         .value=${this._config.power_entity}
                         .configValue=${'power_entity'}
                         @value-changed=${this._valueChanged}
-                        label="Power Entity (Watts)"
+                        label="Power Sensor (W)"
                         allow-custom-entity
                     ></ha-entity-picker>
-                </div>
-
-                <div class="section">
-                    <div class="label">Visuals (Glassmorphism)</div>
-                    <div class="row">
-                        <ha-textfield
-                            label="Card Name"
-                            .value=${this._config.name || ''}
-                            .configValue=${'name'}
-                            @input=${this._valueChanged}
-                        ></ha-textfield>
-                    </div>
-                    <div class="row">
-                        <span>Blur (${this._config.theme?.blur || 14}px)</span>
-                        <ha-slider
-                            .value=${this._config.theme?.blur || 14}
-                            .configValue=${'theme.blur'}
-                            min="0"
-                            max="30"
-                            step="1"
-                            pin
-                            @change=${this._valueChanged}
-                        ></ha-slider>
-                    </div>
-                    <div class="row">
-                        <span>Opacity (${this._config.theme?.opacity || 0.08})</span>
-                        <ha-slider
-                            .value=${this._config.theme?.opacity || 0.08}
-                            .configValue=${'theme.opacity'}
-                            min="0.02"
-                            max="0.20"
-                            step="0.01"
-                            pin
-                            @change=${this._valueChanged}
-                        ></ha-slider>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <div class="label">Energy Monitoring</div>
                     <ha-entity-picker
                         .hass=${this.hass}
                         .value=${this._config.energy_today_entity}
                         .configValue=${'energy_today_entity'}
                         @value-changed=${this._valueChanged}
-                        label="Energy Today Entity (kWh)"
+                        label="Energy Today (kWh)"
                         allow-custom-entity
                     ></ha-entity-picker>
+                    <div class="grid-2">
+                        <ha-entity-picker
+                            .hass=${this.hass}
+                            .value=${this._config.voltage_entity}
+                            .configValue=${'voltage_entity'}
+                            @value-changed=${this._valueChanged}
+                            label="Voltage Sensor (V)"
+                            allow-custom-entity
+                        ></ha-entity-picker>
+                        <ha-entity-picker
+                            .hass=${this.hass}
+                            .value=${this._config.current_entity}
+                            .configValue=${'current_entity'}
+                            @value-changed=${this._valueChanged}
+                            label="Current Sensor (A)"
+                            allow-custom-entity
+                        ></ha-entity-picker>
+                    </div>
                 </div>
 
                 <div class="section">
-                    <div class="label">Timers & Limits</div>
-                    <div class="row">
-                        <span>Enable Auto-Off Timers</span>
-                        <ha-switch
-                            .checked=${this._config.timers?.enabled !== false}
-                            .configValue=${'timers.enabled'}
-                            @change=${this._valueChanged}
-                        ></ha-switch>
+                    <div class="header-row">
+                        <ha-icon icon="mdi:palette"></ha-icon>
+                        <div class="label">Visuals & Glassmorphism</div>
                     </div>
                     <ha-textfield
-                        label="Anomaly Watts Trigger"
-                        type="number"
-                        .value=${this._config.anomaly_watts || 1200}
-                        .configValue=${'anomaly_watts'}
+                        label="Display Name"
+                        .value=${this._config.name || ''}
+                        .configValue=${'name'}
                         @input=${this._valueChanged}
                     ></ha-textfield>
+                    <div class="slider-row">
+                        <div class="slider-label">Glass Blur</div>
+                        <ha-slider
+                            .value=${this._config.theme?.blur || 14}
+                            .configValue=${'theme.blur'}
+                            min="0" max="40" step="1" pin
+                            @change=${this._valueChanged}
+                        ></ha-slider>
+                        <span class="value-tag">${this._config.theme?.blur || 14}px</span>
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-label">Glass Opacity</div>
+                        <ha-slider
+                            .value=${this._config.theme?.opacity || 0.08}
+                            .configValue=${'theme.opacity'}
+                            min="0" max="0.3" step="0.01" pin
+                            @change=${this._valueChanged}
+                        ></ha-slider>
+                        <span class="value-tag">${this._config.theme?.opacity || 0.08}</span>
+                    </div>
                 </div>
 
                 <div class="section">
-                    <div class="label">Sparkline Chart</div>
-                    <div class="row">
-                        <span>Enable Sparkline</span>
+                    <div class="header-row">
+                        <ha-icon icon="mdi:flash"></ha-icon>
+                        <div class="label">Sparkline Chart</div>
+                    </div>
+                    <div class="toggle-row">
+                        <span>Enable Statistics Graph</span>
                         <ha-switch
                             .checked=${this._config.sparkline?.enabled !== false}
                             .configValue=${'sparkline.enabled'}
                             @change=${this._valueChanged}
                         ></ha-switch>
                     </div>
-                    <div class="row">
-                        <span>Line Width (${this._config.sparkline?.line_width || 2})</span>
-                        <ha-slider
-                            .value=${this._config.sparkline?.line_width || 2}
-                            .configValue=${'sparkline.line_width'}
-                            min="1"
-                            max="5"
-                            step="0.5"
-                            pin
-                            @change=${this._valueChanged}
-                        ></ha-slider>
-                    </div>
+                    <ha-textfield
+                        label="Anomaly Warning (Watts)"
+                        type="number"
+                        .value=${this._config.anomaly_watts || 1200}
+                        .configValue=${'anomaly_watts'}
+                        @input=${this._valueChanged}
+                    ></ha-textfield>
                 </div>
             </div>
         `;
@@ -172,27 +172,65 @@ export class LuxSwitchEnergyCardEditor extends LitElement {
     static styles = css`
         .card-config {
             padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
         .section {
-            margin-bottom: 24px;
             display: flex;
             flex-direction: column;
             gap: 12px;
+            padding: 12px;
+            background: rgba(var(--rgb-primary-text-color), 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(var(--rgb-primary-text-color), 0.05);
         }
-        .label {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 4px;
-            color: var(--secondary-text-color);
-        }
-        .row {
+        .header-row {
             display: flex;
             align-items: center;
+            gap: 8px;
+            color: var(--secondary-text-color);
+            margin-bottom: 4px;
+        }
+        .label {
+            font-weight: 500;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .slider-label {
+            flex: 0 0 100px;
+            font-size: 0.9em;
+            color: var(--secondary-text-color);
+        }
+        .value-tag {
+            flex: 0 0 45px;
+            text-align: right;
+            font-size: 0.85em;
+            font-family: monospace;
+            background: rgba(var(--rgb-primary-text-color), 0.05);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .toggle-row {
+            display: flex;
             justify-content: space-between;
-            gap: 16px;
+            align-items: center;
+            font-size: 0.9em;
         }
         ha-slider {
             flex: 1;
+            --paper-slider-container-color: rgba(var(--rgb-primary-text-color), 0.1);
         }
         ha-textfield, ha-entity-picker {
             width: 100%;

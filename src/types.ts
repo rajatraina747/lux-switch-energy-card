@@ -72,6 +72,8 @@ export interface LuxSwitchEnergyCardConfig {
     power_entity?: string;
     energy_today_entity?: string;
     cost_today_entity?: string;
+    voltage_entity?: string;
+    current_entity?: string;
     currency_symbol?: string;
     decimals?: DecimalsConfig;
     anomaly_watts?: number;

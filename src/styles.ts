@@ -114,6 +114,11 @@ export const styles = css`
     animation: breathe 3s infinite ease-in-out;
   }
 
+  .card.on.warming .light-icon {
+    filter: drop-shadow(0 0 25px rgba(214, 178, 94, 1)) brightness(1.8);
+    transition: filter 1s ease-out, brightness 1s ease-out;
+  }
+
   @keyframes breathe {
     0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(214, 178, 94, 0.8)); }
     50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(214, 178, 94, 1)); }

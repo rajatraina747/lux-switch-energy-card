@@ -76,6 +76,18 @@ export class LuxPowerFlow extends LitElement {
       from { stroke-dashoffset: 16; }
       to { stroke-dashoffset: 0; }
     }
+
+    .vibrate {
+      animation: vibrate 0.15s linear infinite !important;
+    }
+
+    @keyframes vibrate {
+      0% { transform: translate(10px, 18px) rotate(0deg); }
+      25% { transform: translate(9px, 17px) rotate(-1deg); }
+      50% { transform: translate(10px, 19px) rotate(0deg); }
+      75% { transform: translate(11px, 17px) rotate(1deg); }
+      100% { transform: translate(10px, 18px) rotate(0deg); }
+    }
   `;
 
   render() {
@@ -87,7 +99,7 @@ export class LuxPowerFlow extends LitElement {
       <div class="flow-container ${this.active ? 'active' : ''}" style="--flow-speed: ${speed}s">
         <svg viewBox="0 0 200 60" preserveAspectRatio="xMidYMid meet">
           <!-- Bolt (Source) - Centered at Y=30 (Local Center Y=12, so translate Y=18) -->
-          <g transform="translate(10, 18)">
+          <g transform="translate(10, 18)" class="${this.active && this.power > 1000 ? 'vibrate' : ''}">
             <path class="source" d="M7,2v11h3v9l7-12h-4l4-8H7z"/>
           </g>
 
