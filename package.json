@@ -1,6 +1,6 @@
 {
   "name": "lux-switch-energy-card",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A premium glassmorphic switch card with energy monitoring",
   "main": "dist/lux-switch-energy-card.js",
   "scripts": {

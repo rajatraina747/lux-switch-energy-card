@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.1.2 (2026-01-02)
+
+### 🐛 Bug Fixes
+- **HACS Installation**: Fixed issue where HACS served an empty/HTML file by correcting `hacs.json` filename path and ensuring valid build artifacts in release.
+
 ## v1.1.1 (2026-01-02)
 
 ### 💎 UX & Design
