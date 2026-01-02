@@ -8,6 +8,16 @@ import './components/power-flow';
 import { normalizeConfig } from './config-utils';
 
 
+// Register the card in the generic UI
+// @ts-ignore
+window.customCards = window.customCards || [];
+// @ts-ignore
+window.customCards.push({
+    type: "lux-switch-energy-card",
+    name: "Lux Switch Energy Card",
+    description: "A premium glassmorphic switch card with energy monitoring",
+});
+
 @customElement('lux-switch-energy-card')
 export class LuxSwitchEnergyCard extends LitElement {
     @property({ attribute: false }) public hass!: any;

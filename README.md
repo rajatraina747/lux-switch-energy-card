@@ -30,27 +30,25 @@ To ensure stability and scope, the following features are **intentionally NOT su
 
 ## Installation
 
-### 1. Build from Source
+### 1. HACS (Recommended)
 
-1. Clone or download this project
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3.  **Build the project:**
-    ```bash
-    npm install
-    npm run build
-    ```
-4.  **Copy the output:**
-    The build interface will output a file at `dist/lux-switch-energy-card.js`. Copy this file to your Home Assistant `www` directory. (e.g., `/config/www/community/lux-switch-energy-card/`)
+1.  Open **HACS** in Home Assistant.
+2.  Go to **Frontend** > **3 dots (top right)** > **Custom repositories**.
+3.  Add the repository URL: `https://github.com/rajatraina747/lux-switch-energy-card`
+4.  Select category: **Lovelace**.
+5.  Click **Add**, then find "Lux Switch Energy Card" in the list and install it.
+6.  When prompted to restart or reload, click **Reload**.
 
-### 2. Add to Resources
+### 2. Manual Installation
 
-Add the following to your Lovelace configuration or via **Settings > Dashboards > ... > Resources**:
+1.  Download `lux-switch-energy-card.js` from the [Releases](https://github.com/rajatraina747/lux-switch-energy-card/releases) page (or the `dist/` folder).
+2.  Upload the file to your Home Assistant `config/www/community/lux-switch-energy-card/` folder.
+3.  Go to **Settings** > **Dashboards** > **3 dots (top right)** > **Resources**.
+4.  Add a new resource:
+    - **URL**: `/local/community/lux-switch-energy-card/lux-switch-energy-card.js`
+    - **Type**: JavaScript Module
 
-- **URL**: `/local/community/lux-switch-energy-card/lux-switch-energy-card.js`
-- **Type**: JavaScript Module
+_(Note: If installed via HACS, the resource URL will be automatically set to `/hacsfiles/lux-switch-energy-card/lux-switch-energy-card.js`)_
 
 ## Configuration
 
