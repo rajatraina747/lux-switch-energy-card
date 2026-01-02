@@ -194,8 +194,8 @@ let P = class extends HTMLElement {
     if (a !== void 0 && this._$Em !== a) {
       const l = i.getPropertyOptions(a), n = typeof l.converter == "function" ? { fromAttribute: l.converter } : ((r = l.converter) == null ? void 0 : r.fromAttribute) !== void 0 ? l.converter : B;
       this._$Em = a;
-      const u = n.fromAttribute(s, l.type);
-      this[a] = u ?? ((o = this._$Ej) == null ? void 0 : o.get(a)) ?? u, this._$Em = null;
+      const d = n.fromAttribute(s, l.type);
+      this[a] = d ?? ((o = this._$Ej) == null ? void 0 : o.get(a)) ?? d, this._$Em = null;
     }
   }
   requestUpdate(t, s, i, a = !1, r) {
@@ -286,20 +286,20 @@ P.elementStyles = [], P.shadowRootOptions = { mode: "open" }, P[N("elementProper
  */
 const U = globalThis, dt = (e) => e, W = U.trustedTypes, ht = W ? W.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, $t = "$lit$", x = `lit$${Math.random().toFixed(9).slice(2)}$`, xt = "?" + x, zt = `<${xt}>`, k = document, L = () => k.createComment(""), z = (e) => e === null || typeof e != "object" && typeof e != "function", it = Array.isArray, Ht = (e) => it(e) || typeof (e == null ? void 0 : e[Symbol.iterator]) == "function", K = `[ 	
 \f\r]`, D = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, pt = /-->/g, ut = />/g, A = RegExp(`>|${K}(?:([^\\s"'>=/]+)(${K}*=${K}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), gt = /'/g, mt = /"/g, wt = /^(?:script|style|textarea|title)$/i, jt = (e) => (t, ...s) => ({ _$litType$: e, strings: t, values: s }), d = jt(1), O = Symbol.for("lit-noChange"), f = Symbol.for("lit-nothing"), ft = /* @__PURE__ */ new WeakMap(), T = k.createTreeWalker(k, 129);
+\f\r"'\`<>=]|("|')|))|$)`, "g"), gt = /'/g, mt = /"/g, wt = /^(?:script|style|textarea|title)$/i, Rt = (e) => (t, ...s) => ({ _$litType$: e, strings: t, values: s }), h = Rt(1), O = Symbol.for("lit-noChange"), f = Symbol.for("lit-nothing"), ft = /* @__PURE__ */ new WeakMap(), T = k.createTreeWalker(k, 129);
 function Et(e, t) {
   if (!it(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return ht !== void 0 ? ht.createHTML(t) : t;
 }
-const Rt = (e, t) => {
+const jt = (e, t) => {
   const s = e.length - 1, i = [];
   let a, r = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = D;
   for (let l = 0; l < s; l++) {
     const n = e[l];
-    let u, h, c = -1, y = 0;
-    for (; y < n.length && (o.lastIndex = y, h = o.exec(n), h !== null); ) y = o.lastIndex, o === D ? h[1] === "!--" ? o = pt : h[1] !== void 0 ? o = ut : h[2] !== void 0 ? (wt.test(h[2]) && (a = RegExp("</" + h[2], "g")), o = A) : h[3] !== void 0 && (o = A) : o === A ? h[0] === ">" ? (o = a ?? D, c = -1) : h[1] === void 0 ? c = -2 : (c = o.lastIndex - h[2].length, u = h[1], o = h[3] === void 0 ? A : h[3] === '"' ? mt : gt) : o === mt || o === gt ? o = A : o === pt || o === ut ? o = D : (o = A, a = void 0);
+    let d, u, c = -1, v = 0;
+    for (; v < n.length && (o.lastIndex = v, u = o.exec(n), u !== null); ) v = o.lastIndex, o === D ? u[1] === "!--" ? o = pt : u[1] !== void 0 ? o = ut : u[2] !== void 0 ? (wt.test(u[2]) && (a = RegExp("</" + u[2], "g")), o = A) : u[3] !== void 0 && (o = A) : o === A ? u[0] === ">" ? (o = a ?? D, c = -1) : u[1] === void 0 ? c = -2 : (c = o.lastIndex - u[2].length, d = u[1], o = u[3] === void 0 ? A : u[3] === '"' ? mt : gt) : o === mt || o === gt ? o = A : o === pt || o === ut ? o = D : (o = A, a = void 0);
     const p = o === A && e[l + 1].startsWith("/>") ? " " : "";
-    r += o === D ? n + zt : c >= 0 ? (i.push(u), n.slice(0, c) + $t + n.slice(c) + x + p) : n + x + (c === -2 ? l : p);
+    r += o === D ? n + zt : c >= 0 ? (i.push(d), n.slice(0, c) + $t + n.slice(c) + x + p) : n + x + (c === -2 ? l : p);
   }
   return [Et(e, r + (e[s] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), i];
 };
@@ -308,23 +308,23 @@ class H {
     let a;
     this.parts = [];
     let r = 0, o = 0;
-    const l = t.length - 1, n = this.parts, [u, h] = Rt(t, s);
-    if (this.el = H.createElement(u, i), T.currentNode = this.el.content, s === 2 || s === 3) {
+    const l = t.length - 1, n = this.parts, [d, u] = jt(t, s);
+    if (this.el = H.createElement(d, i), T.currentNode = this.el.content, s === 2 || s === 3) {
       const c = this.el.content.firstChild;
       c.replaceWith(...c.childNodes);
     }
     for (; (a = T.nextNode()) !== null && n.length < l; ) {
       if (a.nodeType === 1) {
         if (a.hasAttributes()) for (const c of a.getAttributeNames()) if (c.endsWith($t)) {
-          const y = h[o++], p = a.getAttribute(c).split(x), b = /([.?@])?(.*)/.exec(y);
+          const v = u[o++], p = a.getAttribute(c).split(x), b = /([.?@])?(.*)/.exec(v);
           n.push({ type: 1, index: r, name: b[2], strings: p, ctor: b[1] === "." ? Vt : b[1] === "?" ? Ft : b[1] === "@" ? Bt : Y }), a.removeAttribute(c);
         } else c.startsWith(x) && (n.push({ type: 6, index: r }), a.removeAttribute(c));
         if (wt.test(a.tagName)) {
-          const c = a.textContent.split(x), y = c.length - 1;
-          if (y > 0) {
+          const c = a.textContent.split(x), v = c.length - 1;
+          if (v > 0) {
             a.textContent = W ? W.emptyScript : "";
-            for (let p = 0; p < y; p++) a.append(c[p], L()), T.nextNode(), n.push({ type: 2, index: ++r });
-            a.append(c[y], L());
+            for (let p = 0; p < v; p++) a.append(c[p], L()), T.nextNode(), n.push({ type: 2, index: ++r });
+            a.append(c[v], L());
           }
         }
       } else if (a.nodeType === 8) if (a.data === xt) n.push({ type: 2, index: r });
@@ -363,8 +363,8 @@ class It {
     let r = T.nextNode(), o = 0, l = 0, n = i[0];
     for (; n !== void 0; ) {
       if (o === n.index) {
-        let u;
-        n.type === 2 ? u = new V(r, r.nextSibling, this, t) : n.type === 1 ? u = new n.ctor(r, n.name, n.strings, this, t) : n.type === 6 && (u = new Wt(r, this, t)), this._$AV.push(u), n = i[++l];
+        let d;
+        n.type === 2 ? d = new V(r, r.nextSibling, this, t) : n.type === 1 ? d = new n.ctor(r, n.name, n.strings, this, t) : n.type === 6 && (d = new Wt(r, this, t)), this._$AV.push(d), n = i[++l];
       }
       o !== (n == null ? void 0 : n.index) && (r = T.nextNode(), o++);
     }
@@ -454,8 +454,8 @@ class Y {
     if (r === void 0) t = M(this, t, s, 0), o = !z(t) || t !== this._$AH && t !== O, o && (this._$AH = t);
     else {
       const l = t;
-      let n, u;
-      for (t = r[0], n = 0; n < r.length - 1; n++) u = M(this, l[i + n], s, n), u === O && (u = this._$AH[n]), o || (o = !z(u) || u !== this._$AH[n]), u === f ? t = f : t !== f && (t += (u ?? "") + r[n + 1]), this._$AH[n] = u;
+      let n, d;
+      for (t = r[0], n = 0; n < r.length - 1; n++) d = M(this, l[i + n], s, n), d === O && (d = this._$AH[n]), o || (o = !z(d) || d !== this._$AH[n]), d === f ? t = f : t !== f && (t += (d ?? "") + r[n + 1]), this._$AH[n] = d;
     }
     o && !a && this.j(t);
   }
@@ -598,7 +598,7 @@ function S(e) {
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-function v(e) {
+function y(e) {
   return S({ ...e, state: !0, attribute: !1 });
 }
 const Zt = q`
@@ -941,15 +941,25 @@ const Zt = q`
   }
 
   .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--lux-accent-gold);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .stat-value .unit {
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.7;
   }
 
   .stat-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--lux-text-muted);
     text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .toast {
@@ -1025,7 +1035,7 @@ var Jt = Object.defineProperty, Kt = Object.getOwnPropertyDescriptor, Z = (e, t,
     (o = e[r]) && (a = (i ? o(t, s, a) : o(a)) || a);
   return i && a && Jt(t, s, a), a;
 };
-let j = class extends E {
+let R = class extends E {
   constructor() {
     super(...arguments), this.samples = [], this.accentColor = "#d6b25e";
   }
@@ -1043,19 +1053,29 @@ let j = class extends E {
             }
         `;
   }
+  // Catmull-Rom spline to SVG cubic bezier
+  catmullRomToBezier(e, t = 0.5) {
+    if (e.length < 2) return "";
+    let s = `M ${e[0].x} ${e[0].y}`;
+    for (let i = 0; i < e.length - 1; i++) {
+      const a = e[i - 1] || e[0], r = e[i], o = e[i + 1], l = e[i + 2] || o, n = r.x + (o.x - a.x) / 6 * t, d = r.y + (o.y - a.y) / 6 * t, u = o.x - (l.x - r.x) / 6 * t, c = o.y - (l.y - r.y) / 6 * t;
+      s += ` C ${n} ${d}, ${u} ${c}, ${o.x} ${o.y}`;
+    }
+    return s;
+  }
   render() {
-    var u;
+    var d, u;
     if (this.samples.length < 2)
-      return d``;
-    const s = Math.max(...this.samples.map((h) => h.value), 0), i = Math.min(...this.samples.map((h) => h.value), 0), a = s - i || 1, o = this.samples.map((h, c) => {
-      const y = c / (this.samples.length - 1) * 200, p = 40 - (h.value - i) / a * 40;
-      return { x: y, y: p };
-    }).map((h, c) => `${c === 0 ? "M" : "L"} ${h.x} ${h.y}`).join(" "), l = `${o} L 200 40 L 0 40 Z`, n = `grad-${Math.random().toString(36).substr(2, 9)}`;
-    return d`
+      return h``;
+    const s = Math.max(...this.samples.map((c) => c.value), 0), i = Math.min(...this.samples.map((c) => c.value), 0), a = s - i || 1, r = this.samples.map((c, v) => {
+      const p = v / (this.samples.length - 1) * 200, b = 40 - (c.value - i) / a * 40;
+      return { x: p, y: b };
+    }), o = ((d = this.config) == null ? void 0 : d.smoothing) !== !1 ? this.catmullRomToBezier(r) : r.map((c, v) => `${v === 0 ? "M" : "L"} ${c.x} ${c.y}`).join(" "), l = `${o} L 200 40 L 0 40 Z`, n = `grad-${Math.random().toString(36).substr(2, 9)}`;
+    return h`
             <svg viewBox="0 0 ${200} ${40}" preserveAspectRatio="none">
                 <defs>
                     <linearGradient id="${n}" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color:${this.accentColor};stop-opacity:0.2" />
+                        <stop offset="0%" style="stop-color:${this.accentColor};stop-opacity:0.25" />
                         <stop offset="100%" style="stop-color:${this.accentColor};stop-opacity:0" />
                     </linearGradient>
                 </defs>
@@ -1078,28 +1098,28 @@ let j = class extends E {
 };
 Z([
   S({ type: Array })
-], j.prototype, "samples", 2);
+], R.prototype, "samples", 2);
 Z([
   S({ type: Object })
-], j.prototype, "config", 2);
+], R.prototype, "config", 2);
 Z([
   S({ type: String })
-], j.prototype, "accentColor", 2);
-j = Z([
+], R.prototype, "accentColor", 2);
+R = Z([
   G("lux-sparkline")
-], j);
+], R);
 var Xt = Object.defineProperty, Qt = Object.getOwnPropertyDescriptor, at = (e, t, s, i) => {
   for (var a = i > 1 ? void 0 : i ? Qt(t, s) : t, r = e.length - 1, o; r >= 0; r--)
     (o = e[r]) && (a = (i ? o(t, s, a) : o(a)) || a);
   return i && a && Xt(t, s, a), a;
 };
-let R = class extends E {
+let j = class extends E {
   constructor() {
     super(...arguments), this.active = !1, this.power = 0;
   }
   render() {
     const e = Math.max(0.2, 3 - this.power / 500);
-    return d`
+    return h`
       <div class="flow-container ${this.active ? "active" : ""}" style="--flow-speed: ${e}s">
         <svg viewBox="0 0 200 60" preserveAspectRatio="xMidYMid meet">
           <!-- Bolt (Source) - Centered at Y=30 (Local Center Y=12, so translate Y=18) -->
@@ -1120,7 +1140,7 @@ let R = class extends E {
     `;
   }
 };
-R.styles = q`
+j.styles = q`
     :host {
       display: block;
       width: 100%;
@@ -1205,13 +1225,13 @@ R.styles = q`
   `;
 at([
   S({ type: Boolean })
-], R.prototype, "active", 2);
+], j.prototype, "active", 2);
 at([
   S({ type: Number })
-], R.prototype, "power", 2);
-R = at([
+], j.prototype, "power", 2);
+j = at([
   G("lux-power-flow")
-], R);
+], j);
 const vt = /* @__PURE__ */ new Set();
 function St(e, t) {
   vt.has(e) || (vt.add(e), console.warn(`[Lux Switch Card] ${t}`));
@@ -1235,20 +1255,20 @@ function te(e) {
     interval_sec: s.interval_sec !== void 0 ? $(s.interval_sec, 2, 60, "sparkline.interval_sec") : 10
   };
   let o = i.presets || [15, 30, 60];
-  o.length > 10 && (St("timer_presets_max", "Too many timer presets. Limiting to first 10."), o = o.slice(0, 10)), o = o.map((h) => $(h, 1, 240, "timer_preset"));
+  o.length > 10 && (St("timer_presets_max", "Too many timer presets. Limiting to first 10."), o = o.slice(0, 10)), o = o.map((u) => $(u, 1, 240, "timer_preset"));
   const l = {
     ...i,
     presets: o,
     default_minutes: i.default_minutes || 30
     // No hard clamp requested but good to have fallback
-  }, n = e.stale_seconds !== void 0 ? $(e.stale_seconds, 10, 900, "stale_seconds") : 120, u = e.anomaly_watts !== void 0 ? $(e.anomaly_watts, 10, 1e4, "anomaly_watts") : 1200;
+  }, n = e.stale_seconds !== void 0 ? $(e.stale_seconds, 10, 900, "stale_seconds") : 120, d = e.anomaly_watts !== void 0 ? $(e.anomaly_watts, 10, 1e4, "anomaly_watts") : 1200;
   return {
     ...e,
     theme: a,
     sparkline: r,
     timers: l,
     stale_seconds: n,
-    anomaly_watts: u
+    anomaly_watts: d
   };
 }
 var ee = Object.defineProperty, se = Object.getOwnPropertyDescriptor, rt = (e, t, s, i) => {
@@ -1286,8 +1306,8 @@ let I = class extends E {
     this.dispatchEvent(a);
   }
   render() {
-    var e, t, s, i, a;
-    return !this.hass || !this._config ? d`` : d`
+    var e, t, s, i, a, r;
+    return !this.hass || !this._config ? h`` : h`
             <div class="card-config">
                 <div class="section">
                     <div class="header-row">
@@ -1356,25 +1376,41 @@ let I = class extends E {
                         .configValue=${"name"}
                         @input=${this._valueChanged}
                     ></ha-textfield>
+                    <div class="grid-2">
+                        <ha-icon-picker
+                            .hass=${this.hass}
+                            .value=${this._config.icon || "mdi:lightbulb"}
+                            .configValue=${"icon"}
+                            @value-changed=${this._valueChanged}
+                            label="Card Icon"
+                        ></ha-icon-picker>
+                        <ha-textfield
+                            label="Accent Color"
+                            .value=${((e = this._config.theme) == null ? void 0 : e.accent_gold) || "#d6b25e"}
+                            .configValue=${"theme.accent_gold"}
+                            @input=${this._valueChanged}
+                            type="text"
+                        ></ha-textfield>
+                    </div>
                     <div class="slider-row">
                         <div class="slider-label">Glass Blur</div>
                         <ha-slider
-                            .value=${((e = this._config.theme) == null ? void 0 : e.blur) || 14}
+                            .value=${((t = this._config.theme) == null ? void 0 : t.blur) || 14}
                             .configValue=${"theme.blur"}
                             min="0" max="40" step="1" pin
                             @change=${this._valueChanged}
                         ></ha-slider>
-                        <span class="value-tag">${((t = this._config.theme) == null ? void 0 : t.blur) || 14}px</span>
+                        <span class="value-tag">${((s = this._config.theme) == null ? void 0 : s.blur) || 14}px</span>
                     </div>
                     <div class="slider-row">
                         <div class="slider-label">Glass Opacity</div>
                         <ha-slider
-                            .value=${((s = this._config.theme) == null ? void 0 : s.opacity) || 0.08}
+                            .value=${((i = this._config.theme) == null ? void 0 : i.opacity) || 0.08}
                             .configValue=${"theme.opacity"}
                             min="0" max="0.3" step="0.01" pin
                             @change=${this._valueChanged}
                         ></ha-slider>
-                        <span class="value-tag">${((i = this._config.theme) == null ? void 0 : i.opacity) || 0.08}</span>
+                        <span class="value-tag">${((a = this._config.theme) == null ? void 0 : a.opacity) || 0.08}</span>
                     </div>
                 </div>
 
@@ -1386,7 +1422,7 @@ let I = class extends E {
                     <div class="toggle-row">
                         <span>Enable Statistics Graph</span>
                         <ha-switch
-                            .checked=${((a = this._config.sparkline) == null ? void 0 : a.enabled) !== !1}
+                            .checked=${((r = this._config.sparkline) == null ? void 0 : r.enabled) !== !1}
                             .configValue=${"sparkline.enabled"}
                             @change=${this._valueChanged}
                         ></ha-switch>
@@ -1474,7 +1510,7 @@ rt([
   S({ attribute: !1 })
 ], I.prototype, "hass", 2);
 rt([
-  v()
+  y()
 ], I.prototype, "_config", 2);
 I = rt([
   G("lux-switch-energy-card-editor")
@@ -1488,7 +1524,7 @@ window.customCards = window.customCards || [];
 window.customCards.push({
   type: "lux-switch-energy-card",
   name: "Lux Switch Energy Card",
-  description: "A premium glassmorphic switch card with energy monitoring"
+  description: "Monitor power, voltage, and current with real-time graphs and auto-off timers."
 });
 let m = class extends E {
   constructor() {
@@ -1759,10 +1795,10 @@ let m = class extends E {
     return `${t}:${s.toString().padStart(2, "0")}`;
   }
   renderModal() {
-    var o, l, n, u, h;
-    if (!this._showModal) return d``;
+    var o, l, n, d, u;
+    if (!this._showModal) return h``;
     const e = this.getPower(), t = this.getVoltage(), s = this.getCurrent(), i = this.getEnergyTodayEntity(), a = this.getCostTodayEntity(), r = this.getTimeDisplay();
-    return d`
+    return h`
     <div class="modal" @click=${(c) => {
       c.target === c.currentTarget && (this._showModal = !1);
     }}>
@@ -1781,25 +1817,25 @@ let m = class extends E {
                                         <div class="stat-value">${this.formatNumber(this._sessionEnergy, ((l = this._config.decimals) == null ? void 0 : l.energy) || 2)} Wh</div>
                                             <div class="stat-label">${g("modal.session_energy")}</div>
                                                 </div>
-            ${t !== null ? d`
+            ${t !== null ? h`
               <div class="stat-item">
                 <div class="stat-value">${this.formatNumber(t, 1)} V</div>
                 <div class="stat-label">Voltage</div>
               </div>
             ` : ""}
-            ${s !== null ? d`
+            ${s !== null ? h`
               <div class="stat-item">
                 <div class="stat-value">${this.formatNumber(s, 2)} A</div>
                 <div class="stat-label">Current</div>
               </div>
             ` : ""}
-            ${i && i.state !== "unavailable" ? d`
+            ${i && i.state !== "unavailable" ? h`
               <div class="stat-item">
                 <div class="stat-value">${this.formatNumber(parseFloat(i.state), ((n = this._config.decimals) == null ? void 0 : n.energy) || 2)} kWh</div>
                 <div class="stat-label">${g("card.today")}</div>
               </div>
             ` : ""}
-            ${a && a.state !== "unavailable" ? d`
+            ${a && a.state !== "unavailable" ? h`
               <div class="stat-item">
                 <div class="stat-value">${this.formatCurrency(parseFloat(a.state), this._config.currency_symbol)}</div>
                 <div class="stat-label">${g("card.cost_today")}</div>
@@ -1808,7 +1844,7 @@ let m = class extends E {
 </div>
 
     <div class="sparkline-container" style="height: 80px;">
-        ${this._powerSamples.length > 0 ? d`
+        ${this._powerSamples.length > 0 ? h`
         <lux-sparkline
             .samples=${this._powerSamples} 
                 .config=${this._config.sparkline}
@@ -1823,7 +1859,7 @@ let m = class extends E {
                 <div style="font-size: 14px; color: var(--lux-text-muted);">${r.secondary}</div>
                     </div>
 
-          ${this._timerEndTime ? d`
+          ${this._timerEndTime ? h`
             <div class="timer-display">
               <div class="timer-text">${g("card.auto_off_in")}: ${this.getTimerDisplay()}</div>
               <button class="control-button" @click=${this.cancelTimer} style="margin-top: 8px;">
@@ -1832,13 +1868,13 @@ let m = class extends E {
             </div>
           ` : ""}
 
-          ${(u = this._config.modes) != null && u.enabled && ((h = this._config.modes.items) != null && h.length) ? d`
+          ${(d = this._config.modes) != null && d.enabled && ((u = this._config.modes.items) != null && u.length) ? h`
             <div style="margin-top: 24px;">
               <div style="font-size: 14px; color: var(--lux-text-muted); margin-bottom: 12px;">${g("modal.modes")}</div>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                ${this._config.modes.items.map((c) => d`
+                ${this._config.modes.items.map((c) => h`
                   <button class="control-button" @click=${() => this.runMode(c)}>
-                    ${c.icon ? d`<span style="margin-right: 4px;">${c.icon}</span>` : ""}
+                    ${c.icon ? h`<span style="margin-right: 4px;">${c.icon}</span>` : ""}
                     ${c.label}
                   </button>
                 `)}
@@ -1855,11 +1891,11 @@ let m = class extends E {
     }), e.disable_auto_off && (this._autoOffDisabled = !0), e.start_timer_minutes && this.startTimer(e.start_timer_minutes), this._showModal = !1;
   }
   renderToast() {
-    return this._showToast ? d`
+    return this._showToast ? h`
     <div class="toast">
         ${this._toastMessage}
 </div>
-    ` : d``;
+    ` : h``;
   }
   _handleStart(e) {
     this.isUnavailable() || (this._timer = Date.now(), this._holdTimer = window.setTimeout(() => {
@@ -1894,7 +1930,7 @@ let m = class extends E {
   }
   renderModalEmptyState(e) {
     const t = e || 0, s = this._config.anomaly_watts || 1200, i = Math.min(t / s * 100, 100);
-    return d`
+    return h`
         <div class="empty-state-power" style="display: flex; flex-direction: column; justify-content: center; height: 100%; padding: 0 16px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--lux-text-muted);">
                 <span>Real-time Usage</span>
@@ -1911,16 +1947,16 @@ let m = class extends E {
   }
   renderBudget() {
     var o;
-    if (!((o = this._config.budget) != null && o.enabled) || !this._config.budget.limit) return d``;
+    if (!((o = this._config.budget) != null && o.enabled) || !this._config.budget.limit) return h``;
     let e = 0, t = "";
     const s = this._config.budget.entity || this._config.cost_today_entity || this._config.energy_today_entity;
     if (s && this.hass.states[s]) {
       const l = this.hass.states[s];
       e = parseFloat(l.state), t = l.attributes.unit_of_measurement || "";
     }
-    if (isNaN(e)) return d``;
+    if (isNaN(e)) return h``;
     const i = this._config.budget.limit, a = Math.min(e / i * 100, 100), r = e > i;
-    return d`
+    return h`
     <div style="margin-top: 16px; margin-bottom: 8px;">
         <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--lux-text-muted); margin-bottom: 4px;">
             <span>Daily Budget</span>
@@ -1938,9 +1974,9 @@ transition: width 0.5s ease;
         `;
   }
   render() {
-    var l, n, u, h, c, y;
+    var l, n, d, u, c, v;
     if (!this._config || !this.hass)
-      return d``;
+      return h``;
     const e = this.getSwitchEntity(), t = this.getPower(), s = this.getEnergyTodayEntity(), i = this.getCostTodayEntity(), a = this.getTimeDisplay(), r = this.isUnavailable();
     if (this.isOn() && this._sessionStartTime && t !== null) {
       const b = (Date.now() - this._sessionStartTime) / (1e3 * 60 * 60);
@@ -1951,7 +1987,7 @@ transition: width 0.5s ease;
       const p = this._config.anomaly_watts || 1200, b = Math.min(t / p, 1), At = 15 + b * 35, Tt = 0.4 + b * 0.4;
       o = `filter: drop-shadow(0 0 ${At}px rgba(var(--accent-gold-rgb), ${Tt})); transition: filter 0.5s ease-out;`;
     } else this.isOn() && (o = "filter: drop-shadow(0 0 15px rgba(var(--accent-gold-rgb), 0.4)); transition: filter 0.5s ease-out;");
-    return d`
+    return h`
     <div
 class="card ${this.isOn() ? "on" : "off"} ${this._warmingUp ? "warming" : ""}"
 @mousedown=${this._handleStart}
@@ -1974,9 +2010,7 @@ tabindex="0"
     }}
                 tabindex="0"
             >
-                <svg class="light-icon" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm2 11h-4v-1h4v1zm0-2h-4V8c0-1.1.9-2 2-2s2 .9 2 2v3z" />
-                        </svg>
+                <ha-icon icon="${this._config.icon || "mdi:lightbulb"}" class="light-icon"></ha-icon>
                         </div>
                         <h2 class="name">${this._config.name || ((l = e == null ? void 0 : e.attributes) == null ? void 0 : l.friendly_name) || "Kitchen Light"}</h2>
                             </div>
@@ -2007,18 +2041,18 @@ tabindex="0"
                         </div>
                         <div class="energy-item">
                             <div class="energy-value">
-                                ${this.formatNumber(this._sessionEnergy, ((u = this._config.decimals) == null ? void 0 : u.energy) || 2)} Wh
+                                ${this.formatNumber(this._sessionEnergy, ((d = this._config.decimals) == null ? void 0 : d.energy) || 2)} Wh
                                     </div>
                                     <div class="energy-label">${g("card.session")}</div>
                                         </div>
-          ${s && s.state !== "unavailable" ? d`
+          ${s && s.state !== "unavailable" ? h`
             <div class="energy-item">
               <div class="energy-value">
-                ${this.formatNumber(parseFloat(s.state), ((h = this._config.decimals) == null ? void 0 : h.energy) || 2)} kWh</div>
+                ${this.formatNumber(parseFloat(s.state), ((u = this._config.decimals) == null ? void 0 : u.energy) || 2)} kWh</div>
               <div class="energy-label">${g("card.today")}</div>
             </div>
           ` : ""}
-          ${i && i.state !== "unavailable" ? d`
+          ${i && i.state !== "unavailable" ? h`
             <div class="energy-item">
               <div class="energy-value">
                 ${this.formatCurrency(parseFloat(i.state), this._config.currency_symbol)}
@@ -2033,39 +2067,39 @@ tabindex="0"
 <div class="time-section">
     <div class="time-info">
         <strong>${a.primary}</strong>
-            ${a.secondary ? d`<br>${a.secondary}` : ""}
+            ${a.secondary ? h`<br>${a.secondary}` : ""}
 </div>
     </div>
 
-        ${this._timerEndTime ? d`
+        ${this._timerEndTime ? h`
           <div class="timer-display">
             <div class="timer-text">${g("card.auto_off_in")}: ${this.getTimerDisplay()}</div>
           </div>
         ` : ""}
 
-        ${(c = this._config.timers) != null && c.enabled && this.isOn() ? d`
+        ${(c = this._config.timers) != null && c.enabled && this.isOn() ? h`
           <div class="controls-section">
-            ${(y = this._config.timers.presets) == null ? void 0 : y.map((p) => d`
+            ${(v = this._config.timers.presets) == null ? void 0 : v.map((p) => h`
               <button class="control-button" @click=${(b) => {
       b.stopPropagation(), this.startTimer(p);
     }}>
                 ${p}m
               </button>
             `)}
-            ${this._timerEndTime ? d`
+            ${this._timerEndTime ? h`
               <button class="control-button" @click=${(p) => {
       p.stopPropagation(), this.cancelTimer();
     }}>
                 ${g("card.cancel")}
               </button>
             ` : ""}
-            ${this._autoOffDisabled ? d`
+            ${this._autoOffDisabled ? h`
               <button class="control-button active" @click=${(p) => {
       p.stopPropagation(), this._autoOffDisabled = !1;
     }}>
                 ${g("card.auto_off_disabled")}
               </button>
-            ` : d`
+            ` : h`
               <button class="control-button" @click=${(p) => {
       p.stopPropagation(), this._autoOffDisabled = !0;
     }}>
@@ -2075,7 +2109,7 @@ tabindex="0"
           </div>
         ` : ""}
 
-        ${t !== null && this._config.anomaly_watts && t > this._config.anomaly_watts ? d`
+        ${t !== null && this._config.anomaly_watts && t > this._config.anomaly_watts ? h`
           <div class="status-chip anomaly" style="margin-top: 12px;">
             ${g("card.high_power")}
           </div>
@@ -2097,49 +2131,49 @@ _([
   S({ attribute: !1 })
 ], m.prototype, "hass", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_config", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_showModal", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_sessionEnergy", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_sessionStartTime", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_activeTimer", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_timerEndTime", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_showToast", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_toastMessage", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_powerSamples", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_sampleInterval", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_autoOffDisabled", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_lastOnTime", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_lastOffTime", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_warmingUp", 2);
 _([
-  v()
+  y()
 ], m.prototype, "_historyFetched", 2);
 m = _([
   G("lux-switch-energy-card")

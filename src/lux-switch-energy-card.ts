@@ -16,7 +16,7 @@ window.customCards = window.customCards || [];
 window.customCards.push({
     type: "lux-switch-energy-card",
     name: "Lux Switch Energy Card",
-    description: "A premium glassmorphic switch card with energy monitoring",
+    description: "Monitor power, voltage, and current with real-time graphs and auto-off timers.",
 });
 
 @customElement('lux-switch-energy-card')
@@ -806,9 +806,7 @@ tabindex="0"
             }}
                 tabindex="0"
             >
-                <svg class="light-icon" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm2 11h-4v-1h4v1zm0-2h-4V8c0-1.1.9-2 2-2s2 .9 2 2v3z" />
-                        </svg>
+                <ha-icon icon="${this._config.icon || 'mdi:lightbulb'}" class="light-icon"></ha-icon>
                         </div>
                         <h2 class="name">${this._config.name || entity?.attributes?.friendly_name || 'Kitchen Light'}</h2>
                             </div>

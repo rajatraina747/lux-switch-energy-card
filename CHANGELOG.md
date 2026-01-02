@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.4.0 (2026-01-02)
+
+### 🚀 New Features
+- **MDI Icon Picker**: Choose any MDI icon (e.g., `mdi:power-plug`) for your card directly in the GUI editor.
+- **Accent Color Picker**: Customize the gold accent color to match your dashboard theme.
+
+### 💎 UX & Design
+- **Smooth Sparklines**: Replaced jagged polylines with silky Catmull-Rom spline curves for a professional, organic graph appearance.
+- **Enhanced Stats**: Larger value numbers with subtle unit styling for improved readability.
+- **Improved Card Description**: The card picker now displays a more informative description.
+
 ## v1.3.0 (2026-01-02)
 
 ### 🚀 New Features

@@ -340,15 +340,25 @@ export const styles = css`
   }
 
   .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--lux-accent-gold);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .stat-value .unit {
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.7;
   }
 
   .stat-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--lux-text-muted);
     text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .toast {

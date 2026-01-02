@@ -122,6 +122,22 @@ export class LuxSwitchEnergyCardEditor extends LitElement {
                         .configValue=${'name'}
                         @input=${this._valueChanged}
                     ></ha-textfield>
+                    <div class="grid-2">
+                        <ha-icon-picker
+                            .hass=${this.hass}
+                            .value=${this._config.icon || 'mdi:lightbulb'}
+                            .configValue=${'icon'}
+                            @value-changed=${this._valueChanged}
+                            label="Card Icon"
+                        ></ha-icon-picker>
+                        <ha-textfield
+                            label="Accent Color"
+                            .value=${this._config.theme?.accent_gold || '#d6b25e'}
+                            .configValue=${'theme.accent_gold'}
+                            @input=${this._valueChanged}
+                            type="text"
+                        ></ha-textfield>
+                    </div>
                     <div class="slider-row">
                         <div class="slider-label">Glass Blur</div>
                         <ha-slider
