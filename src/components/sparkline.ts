@@ -77,8 +77,14 @@ export class LuxSparkline extends LitElement {
             ? this.movingAverage(this.samples, 3)
             : this.samples;
 
-        const maxValue = Math.max(...smoothedSamples.map(s => s.value), 0);
-        const minValue = Math.min(...smoothedSamples.map(s => s.value), 0);
+        let maxValue = Math.max(...smoothedSamples.map(s => s.value), 0.1);
+        let minValue = Math.min(...smoothedSamples.map(s => s.value), 0);
+
+        // Add 10% vertical padding to prevent clipping at extremes
+        const padding = (maxValue - minValue) * 0.1 || 0.1;
+        maxValue += padding;
+        minValue = Math.max(0, minValue - padding); // Don't go below 0 for power
+
         const range = (maxValue - minValue) || 1;
 
         const points = smoothedSamples.map((sample, index) => {
@@ -87,9 +93,9 @@ export class LuxSparkline extends LitElement {
             return { x, y };
         });
 
-        // Use smooth Catmull-Rom spline with high tension
+        // Use smooth Catmull-Rom spline with moderate tension (1.0) to prevent overshooting
         const smoothPath = this.config?.smoothing !== false
-            ? this.catmullRomToBezier(points, 1.5)
+            ? this.catmullRomToBezier(points, 1.0)
             : points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
         const areaPath = `${smoothPath} L ${width} ${height} L 0 ${height} Z`;

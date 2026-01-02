@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.2 (2026-01-02)
+
+### 🐞 Bug Fixes & Regressions
+- **Fixed Editor Visibility**: Reverted to custom sections to ensure "Core Entities" and "Monitoring Sensors" are always visible in all Home Assistant environments.
+- **Fixed Sparkline Clipping**: Reduced spline tension (from 1.5 to 1.0) and added 10% vertical padding to prevent the graph from being cut off at the top/bottom boundaries.
+- **Resolved Interaction Conflict**: Fix event interference that caused unintended card toggles when using the Home Assistant dashboard editor.
+
 ## v1.4.1 (2026-01-02)
 
 ### 🚀 New Features
