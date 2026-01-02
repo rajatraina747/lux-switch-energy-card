@@ -110,18 +110,18 @@ export const styles = css`
 
   .card.on .light-icon {
     fill: var(--lux-accent-gold);
-    filter: drop-shadow(0 0 8px rgba(214, 178, 94, 0.8));
-    animation: breathe 3s infinite ease-in-out;
+    filter: drop-shadow(0 0 8px rgba(var(--accent-gold-rgb), var(--glow-intensity)));
+    animation: breathe var(--breathe-speed) infinite ease-in-out;
   }
 
   .card.on.warming .light-icon {
-    filter: drop-shadow(0 0 25px rgba(214, 178, 94, 1)) brightness(1.8);
+    filter: drop-shadow(0 0 25px rgba(var(--accent-gold-rgb), 1)) brightness(1.8);
     transition: filter 1s ease-out, brightness 1s ease-out;
   }
 
   @keyframes breathe {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(214, 178, 94, 0.8)); }
-    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(214, 178, 94, 1)); }
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(var(--accent-gold-rgb), var(--glow-intensity))); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(var(--accent-gold-rgb), calc(var(--glow-intensity) * 1.5))); }
   }
 
   .name {
@@ -129,6 +129,19 @@ export const styles = css`
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--lux-text-primary);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .secondary-info {
+    font-size: 0.8rem;
+    color: var(--lux-text-muted);
+    font-weight: 500;
+    white-space: nowrap;
   }
 
   .status-chip {
@@ -337,6 +350,36 @@ export const styles = css`
     background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .range-selector {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .range-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--lux-text-muted);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .range-chip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--lux-text-primary);
+  }
+
+  .range-chip.active {
+    background: rgba(var(--accent-gold-rgb), 0.15);
+    color: var(--lux-accent-gold);
+    border-color: rgba(var(--accent-gold-rgb), 0.3);
   }
 
   .stat-value {

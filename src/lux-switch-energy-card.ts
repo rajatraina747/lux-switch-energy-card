@@ -36,6 +36,8 @@ export class LuxSwitchEnergyCard extends LitElement {
     @state() private _lastOnTime: number | null = null;
     @state() private _lastOffTime: number | null = null;
     @state() private _warmingUp = false;
+    @state() private _historyRange: '1h' | '6h' | '24h' | '7d' = '1h';
+    @state() private _historyFetched = false;
 
     static get styles() {
         return styles;
@@ -134,6 +136,17 @@ export class LuxSwitchEnergyCard extends LitElement {
 
     private updateThemeVariables() {
         const theme = this._config.theme;
+        let p = theme?.preset || 'noir';
+
+        // Define preset defaults
+        const presets: Record<string, any> = {
+            noir: { accent: '#d6b25e', purple: '#6b21a8', blur: 14, opacity: 0.08, radius: 24 },
+            emerald: { accent: '#10b981', purple: '#064e3b', blur: 20, opacity: 0.12, radius: 28 },
+            cyberpunk: { accent: '#f472b6', purple: '#7e22ce', blur: 10, opacity: 0.15, radius: 12 },
+            slate: { accent: '#38bdf8', purple: '#1e293b', blur: 25, opacity: 0.05, radius: 32 }
+        };
+
+        const activePreset = presets[p] || presets.noir;
 
         const setProp = (name: string, value: string | undefined | number) => {
             if (value !== undefined && value !== null) {
@@ -143,8 +156,8 @@ export class LuxSwitchEnergyCard extends LitElement {
             }
         };
 
-        setProp('--glass-blur', `${theme?.blur || 14}px`);
-        setProp('--glass-opacity', theme?.opacity || 0.08);
+        setProp('--glass-blur', `${theme?.blur ?? activePreset.blur}px`);
+        setProp('--glass-opacity', theme?.opacity ?? activePreset.opacity);
 
         if (theme?.panel_color) {
             this.style.setProperty('--lux-panel-color', theme.panel_color);
@@ -152,9 +165,10 @@ export class LuxSwitchEnergyCard extends LitElement {
             this.style.setProperty('--lux-panel-color', 'var(--ha-card-background, rgba(255, 255, 255, 0.06))');
         }
 
-        setProp('--lux-accent-gold', theme?.accent_gold || '#d6b25e');
-        this.style.setProperty('--accent-gold-rgb', this.hexToRgb(theme?.accent_gold || '#d6b25e'));
-        setProp('--lux-accent-purple', theme?.accent_purple || '#6b21a8');
+        const accentGold = theme?.accent_gold || activePreset.accent;
+        setProp('--lux-accent-gold', accentGold);
+        this.style.setProperty('--accent-gold-rgb', this.hexToRgb(accentGold));
+        setProp('--lux-accent-purple', theme?.accent_purple || activePreset.purple);
 
         if (theme?.text_primary) {
             this.style.setProperty('--lux-text-primary', theme.text_primary);
@@ -168,9 +182,31 @@ export class LuxSwitchEnergyCard extends LitElement {
             this.style.setProperty('--lux-text-muted', 'var(--secondary-text-color, rgba(255, 255, 255, 0.62))');
         }
 
-        setProp('--lux-shadow-strength', theme?.shadow_strength);
-        setProp('--lux-glow-strength', theme?.glow_strength);
-        setProp('--lux-border-radius', `${theme?.border_radius || 24}px`);
+        setProp('--lux-shadow-strength', theme?.shadow_strength ?? 0.35);
+        setProp('--lux-glow-strength', theme?.glow_strength ?? 0.65);
+        setProp('--lux-border-radius', `${theme?.border_radius ?? activePreset.radius}px`);
+
+        this.updateDynamicVisuals();
+    }
+
+    private updateDynamicVisuals() {
+        if (!this.isOn()) {
+            this.style.setProperty('--breathe-speed', '3s');
+            this.style.setProperty('--glow-intensity', '0.4');
+            return;
+        }
+
+        const power = this.getPower() || 0;
+        const anomaly = this._config.anomaly_watts || 1200;
+
+        // Scale breathe speed: 3s (idle) down to 0.5s (peak)
+        const ratio = Math.min(power / anomaly, 1);
+        const speed = 3 - (ratio * 2.5);
+        this.style.setProperty('--breathe-speed', `${speed.toFixed(2)}s`);
+
+        // Scale glow intensity: 0.4 up to 1.2
+        const intensity = 0.4 + (ratio * 0.8);
+        this.style.setProperty('--glow-intensity', intensity.toFixed(2));
     }
 
     private hexToRgb(hex: string): string {
@@ -530,7 +566,21 @@ export class LuxSwitchEnergyCard extends LitElement {
             }
 </div>
 
-    <div class="sparkline-container" style="height: 80px;">
+    <div class="range-selector">
+        ${(['1h', '6h', '24h', '7d'] as const).map(range => html`
+            <button 
+                class="range-chip ${this._historyRange === range ? 'active' : ''}"
+                @click=${() => {
+                    this._historyRange = range;
+                    this.fetchHistory();
+                }}
+            >
+                ${range}
+            </button>
+        `)}
+    </div>
+
+    <div class="sparkline-container" style="height: 100px; margin: 24px 0;">
         ${this._powerSamples.length > 0 ? html`
         <lux-sparkline
             .samples=${this._powerSamples} 
@@ -630,8 +680,6 @@ export class LuxSwitchEnergyCard extends LitElement {
     }
 
 
-    @state() private _historyFetched = false;
-
     protected firstUpdated(changedProps: any) {
         super.firstUpdated(changedProps);
         if (this._config.sparkline?.enabled && this._config.power_entity && !this._historyFetched) {
@@ -642,14 +690,19 @@ export class LuxSwitchEnergyCard extends LitElement {
     private async fetchHistory() {
         if (!this.hass || !this._config.power_entity) return;
 
-        // Fetch last 1 hour of history
+        const rangeMap = {
+            '1h': 1 * 60 * 60 * 1000,
+            '6h': 6 * 60 * 60 * 1000,
+            '24h': 24 * 60 * 60 * 1000,
+            '7d': 7 * 24 * 60 * 60 * 1000
+        };
+
+        const duration = rangeMap[this._historyRange] || rangeMap['1h'];
         const endTime = new Date();
-        const startTime = new Date(endTime.getTime() - 60 * 60 * 1000); // 1 hour ago
+        const startTime = new Date(endTime.getTime() - duration);
 
         try {
             // Native HA API call
-            // We use the 'history/period' endpoint
-            // Format: /api/history/period/<timestamp>?filter_entity_id=<entity_id>&end_time=<end_timestamp>
             const history = await this.hass.callApi(
                 'GET',
                 `history/period/${startTime.toISOString()}?filter_entity_id=${this._config.power_entity}&end_time=${endTime.toISOString()}&minimal_response`
@@ -663,21 +716,13 @@ export class LuxSwitchEnergyCard extends LitElement {
                     }))
                     .filter((s: PowerSample) => !isNaN(s.value));
 
-                // Merge with existing samples (if any were collected while loading)
-                // Create a map for deduplication
-                const samplesMap = new Map();
-                [...historicalSamples, ...this._powerSamples].forEach(s => samplesMap.set(s.timestamp, s));
-
-                this._powerSamples = Array.from(samplesMap.values())
+                this._powerSamples = historicalSamples
                     .sort((a, b) => a.timestamp - b.timestamp)
-                    // Limit to roughly what the sparkline expects (e.g. last 60-100 points)
-                    // or just let the sparkline handle it. We'll clip to the configured window.
                     .filter(s => s.timestamp > startTime.getTime());
-
-                this._historyFetched = true;
             }
+            this._historyFetched = true;
         } catch (e) {
-            console.warn('Lux Card: Failed to fetch history', e);
+            console.error('Error fetching history:', e);
         }
     }
 
@@ -821,9 +866,17 @@ tabindex="0"
                         </div>
                         <h2 class="name">${this._config.name || entity?.attributes?.friendly_name || 'Kitchen Light'}</h2>
                             </div>
-                            <div class="status-chip ${isUnavailable ? 'unavailable' : this.isOn() ? 'on' : ''}">
-                                ${isUnavailable ? localize('common.unavailable') : this.isOn() ? localize('common.on') : localize('common.off')}
-</div>
+                            <div class="header-right">
+                                ${this._config.secondary_info_entity ? html`
+                                    <div class="secondary-info">
+                                        ${this.hass.states[this._config.secondary_info_entity]?.state}
+                                        ${this.hass.states[this._config.secondary_info_entity]?.attributes?.unit_of_measurement || ''}
+                                    </div>
+                                ` : ''}
+                                <div class="status-chip ${isUnavailable ? 'unavailable' : this.isOn() ? 'on' : ''}">
+                                    ${isUnavailable ? localize('common.unavailable') : this.isOn() ? localize('common.on') : localize('common.off')}
+                                </div>
+                            </div>
     </div>
 
     <lux-power-flow

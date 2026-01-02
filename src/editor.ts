@@ -85,6 +85,14 @@ export class LuxSwitchEnergyCardEditor extends LitElement {
                     ></ha-entity-picker>
                     <ha-entity-picker
                         .hass=${this.hass}
+                        .value=${this._config.secondary_info_entity}
+                        .configValue=${'secondary_info_entity'}
+                        @value-changed=${this._valueChanged}
+                        label="Secondary Info Sensor (Optional)"
+                        allow-custom-entity
+                    ></ha-entity-picker>
+                    <ha-entity-picker
+                        .hass=${this.hass}
                         .value=${this._config.energy_today_entity}
                         .configValue=${'energy_today_entity'}
                         @value-changed=${this._valueChanged}
@@ -131,6 +139,18 @@ export class LuxSwitchEnergyCardEditor extends LitElement {
                         @input=${this._valueChanged}
                     ></ha-textfield>
                     <div class="grid-2">
+                        <ha-select
+                            label="Theme Preset"
+                            .value=${this._config.theme?.preset || 'noir'}
+                            .configValue=${'theme.preset'}
+                            @selected=${this._valueChanged}
+                            @closed=${(e: any) => e.stopPropagation()}
+                        >
+                            <mwc-list-item value="noir">noir - Gold Noir</mwc-list-item>
+                            <mwc-list-item value="emerald">emerald - Sea Emerald</mwc-list-item>
+                            <mwc-list-item value="cyberpunk">cyberpunk - Neon Pink</mwc-list-item>
+                            <mwc-list-item value="slate">slate - Muted Slate</mwc-list-item>
+                        </ha-select>
                         <ha-icon-picker
                             .hass=${this.hass}
                             .value=${this._config.icon || 'mdi:lightbulb'}
@@ -138,6 +158,7 @@ export class LuxSwitchEnergyCardEditor extends LitElement {
                             @value-changed=${this._valueChanged}
                             label="Card Icon"
                         ></ha-icon-picker>
+                    </div>
                         <ha-textfield
                             label="Accent Color"
                             .value=${this._config.theme?.accent_gold || '#d6b25e'}

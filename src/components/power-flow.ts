@@ -91,14 +91,25 @@ export class LuxPowerFlow extends LitElement {
   `;
 
   render() {
-    // Calculate speed based on power. Higher power = lower duration (faster)
+    // Calculate speed based on power. Higher power = faster flow (lower duration)
     // Range: 0W -> 5s, 3000W -> 0.2s
-    const speed = Math.max(0.2, 3 - (this.power / 500));
+    const speed = Math.max(0.1, 4 - (Math.min(this.power, 2000) / 2000) * 3.8);
+
+    // Dynamic color based on power
+    let flowColor = 'var(--lux-accent-gold, #d6b25e)';
+    if (this.power < 50) {
+      flowColor = 'var(--lux-accent-gold, #d6b25e)'; // Use theme default
+    } else if (this.power >= 1000) {
+      flowColor = '#ef4444'; // Alert Red
+    } else {
+      flowColor = '#d6b25e'; // Energetic Gold
+    }
 
     return html`
-      <div class="flow-container ${this.active ? 'active' : ''}" style="--flow-speed: ${speed}s">
+      <div class="flow-container ${this.active ? 'active' : ''}" 
+           style="--flow-speed: ${speed.toFixed(2)}s; --lux-accent-gold: ${flowColor};">
         <svg viewBox="0 0 200 60" preserveAspectRatio="xMidYMid meet">
-          <!-- Bolt (Source) - Centered at Y=30 (Local Center Y=12, so translate Y=18) -->
+          <!-- Bolt (Source) -->
           <g transform="translate(10, 18)" class="${this.active && this.power > 1000 ? 'vibrate' : ''}">
             <path class="source" d="M7,2v11h3v9l7-12h-4l4-8H7z"/>
           </g>
@@ -107,7 +118,7 @@ export class LuxPowerFlow extends LitElement {
           <path class="path-base" d="M35 30 L165 30" />
           <path class="flow-path" d="M35 30 L165 30" />
 
-          <!-- Table Lamp (Destination) - Centered at Y=30 (Local Center Y=12, so translate Y=18) -->
+          <!-- Table Lamp (Destination) -->
           <g transform="translate(170, 18)">
              <path class="destination" d="M8,2 L16,2 L18,14 L6,14 L8,2 Z M5,15 L19,15 L19,17 L5,17 L5,15 Z M11,17 L11,20 L8,20 L8,22 L16,22 L16,20 L13,20 L13,17 L11,17 Z"/>
           </g>

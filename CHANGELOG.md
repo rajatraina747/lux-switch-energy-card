@@ -1,5 +1,32 @@
 # Changelog
 
+## v1.5.0 (2026-01-02) "The Pro Update" 🚀
+
+This major update introduces professional-grade features, dynamic visuals, and deeper data insights.
+
+### 🎨 Curated "Lux Themes"
+- Introduced 4 premium theme presets: **Noir**, **Emerald**, **Cyberpunk**, and **Slate**.
+- Presets automatically adjust glass blur, opacity, accent colors, and border radius.
+
+### ⚡ Dynamic Intensity Visuals
+- **Reactive Animations**: The card's "breathe" pulse and glow intensity now scale dynamically with power usage.
+- **High-Usage Alerting**: The card visually "vibrates" and pulses faster when approaching configured peak (anomaly) watts.
+
+### 🌊 Advanced Power Flow
+- **Multi-Color Signaling**: The power flow dots now change color based on wattage:
+    - `< 50W`: Soft Accent
+    - `50W - 1000W`: Energetic Gold
+    - `> 1000W`: Alert Red
+- **Wattage-Scaled Speed**: Flow speed is now precisely mapped to the actual power draw.
+
+### 📊 Interactive History Range
+- **Dynamic Lookback**: Switch between **1h**, **6h**, **24h**, and **7d** history views directly in the details modal.
+- Improved history fetching logic for smoother graph updates.
+
+### 🏷️ Header Enhancements
+- **Secondary Info Sensor**: Support for a secondary entity in the header (e.g., Temperature, Voltage, or Signal Strength).
+- Improved header layout for high-density information.
+
 ## v1.4.2 (2026-01-02)
 
 ### 🐞 Bug Fixes & Regressions

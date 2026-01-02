@@ -36,6 +36,7 @@ export interface ModesConfig {
 }
 
 export interface ThemeConfig {
+    preset?: 'noir' | 'emerald' | 'cyberpunk' | 'slate' | 'custom';
     glass?: boolean;
     blur?: number;
     opacity?: number;
@@ -70,6 +71,7 @@ export interface LuxSwitchEnergyCardConfig {
     name?: string;
     icon?: string;
     power_entity?: string;
+    secondary_info_entity?: string;
     energy_today_entity?: string;
     cost_today_entity?: string;
     voltage_entity?: string;
