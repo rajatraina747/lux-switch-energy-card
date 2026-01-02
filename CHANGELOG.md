@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.1 (2026-01-02)
+
+### 🐞 Bug Fixes
+- **Fixed "hass" Null Reference Error**: Added robust null guards for the Home Assistant `hass` object to prevent the card from crashing during initial load or when configuration is incomplete.
+- **Improved Lifecycle Stability**: Fixed an issue where `updateThemeVariables` was called before the state object was fully initialized.
+
 ## v1.5.0 (2026-01-02) "The Pro Update" 🚀
 
 This major update introduces professional-grade features, dynamic visuals, and deeper data insights.

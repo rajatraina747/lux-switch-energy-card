@@ -120,9 +120,9 @@ export class LuxSwitchEnergyCard extends LitElement {
 
     protected updated(changedProperties: PropertyValues): void {
         super.updated(changedProperties);
-        if (changedProperties.has('hass')) {
+        if (changedProperties.has('hass') && this.hass && this._config.entity) {
             const oldHass = changedProperties.get('hass') as any;
-            const oldState = oldHass ? oldHass.states[this._config.entity]?.state : undefined;
+            const oldState = oldHass?.states?.[this._config.entity]?.state;
             const newState = this.hass.states[this._config.entity]?.state;
 
             if (oldState === 'off' && newState === 'on') {
@@ -132,9 +132,15 @@ export class LuxSwitchEnergyCard extends LitElement {
                 }, 1000); // 1s organic slow fade
             }
         }
+
+        if (changedProperties.has('hass') || changedProperties.has('_config')) {
+            this.updateThemeVariables();
+        }
     }
 
     private updateThemeVariables() {
+        if (!this._config) return;
+
         const theme = this._config.theme;
         let p = theme?.preset || 'noir';
 
@@ -190,7 +196,7 @@ export class LuxSwitchEnergyCard extends LitElement {
     }
 
     private updateDynamicVisuals() {
-        if (!this.isOn()) {
+        if (!this.hass || !this.isOn()) {
             this.style.setProperty('--breathe-speed', '3s');
             this.style.setProperty('--glow-intensity', '0.4');
             return;
@@ -239,31 +245,31 @@ export class LuxSwitchEnergyCard extends LitElement {
     }
 
     private getSwitchEntity() {
-        return this.hass.states[this._config.entity];
+        return this.hass?.states[this._config.entity];
     }
 
     private getPowerEntity() {
-        return this._config.power_entity ? this.hass.states[this._config.power_entity] : null;
+        return this._config.power_entity && this.hass ? this.hass.states[this._config.power_entity] : null;
     }
 
     private getEnergyTodayEntity() {
-        return this._config.energy_today_entity ? this.hass.states[this._config.energy_today_entity] : null;
+        return this._config.energy_today_entity && this.hass ? this.hass.states[this._config.energy_today_entity] : null;
     }
 
     private getCostTodayEntity() {
-        return this._config.cost_today_entity ? this.hass.states[this._config.cost_today_entity] : null;
+        return this._config.cost_today_entity && this.hass ? this.hass.states[this._config.cost_today_entity] : null;
     }
 
     private getTotalEnergyEntity() {
-        return this._config.total_energy_entity ? this.hass.states[this._config.total_energy_entity] : null;
+        return this._config.total_energy_entity && this.hass ? this.hass.states[this._config.total_energy_entity] : null;
     }
 
     private getVoltageEntity() {
-        return this._config.voltage_entity ? this.hass.states[this._config.voltage_entity] : null;
+        return this._config.voltage_entity && this.hass ? this.hass.states[this._config.voltage_entity] : null;
     }
 
     private getCurrentEntity() {
-        return this._config.current_entity ? this.hass.states[this._config.current_entity] : null;
+        return this._config.current_entity && this.hass ? this.hass.states[this._config.current_entity] : null;
     }
 
     private isOn(): boolean {
@@ -867,10 +873,10 @@ tabindex="0"
                         <h2 class="name">${this._config.name || entity?.attributes?.friendly_name || 'Kitchen Light'}</h2>
                             </div>
                             <div class="header-right">
-                                ${this._config.secondary_info_entity ? html`
+                                ${this._config.secondary_info_entity && this.hass?.states[this._config.secondary_info_entity] ? html`
                                     <div class="secondary-info">
-                                        ${this.hass.states[this._config.secondary_info_entity]?.state}
-                                        ${this.hass.states[this._config.secondary_info_entity]?.attributes?.unit_of_measurement || ''}
+                                        ${this.hass.states[this._config.secondary_info_entity].state}
+                                        ${this.hass.states[this._config.secondary_info_entity].attributes?.unit_of_measurement || ''}
                                     </div>
                                 ` : ''}
                                 <div class="status-chip ${isUnavailable ? 'unavailable' : this.isOn() ? 'on' : ''}">
