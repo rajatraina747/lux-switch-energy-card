@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.4.1 (2026-01-02)
+
+### 🚀 New Features
+- **Today's Energy (Sensor Support)**: Added `total_energy_entity` to support direct readings from energy sensors (e.g., smart plugs) in the modal.
+
+### 💎 UX & Design
+- **Silky Smooth Sparklines**: Enhanced smoothing using a 3-point moving average combined with high-tension Catmull-Rom splines to eliminate "sawtooth" jitter from noisy data.
+- **OFF State Fade**: The sparkline now gracefully fades when the device is OFF, making the state clear at a glance.
+- **Improved Editor Visibility**: Refactored the GUI editor to use expansion panels that are expanded by default, ensuring all configuration options are immediately visible.
+
 ## v1.4.0 (2026-01-02)
 
 ### 🚀 New Features

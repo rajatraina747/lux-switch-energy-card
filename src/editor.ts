@@ -55,61 +55,73 @@ export class LuxSwitchEnergyCardEditor extends LitElement {
 
         return html`
             <div class="card-config">
-                <div class="section">
-                    <div class="header-row">
+                <ha-expansion-panel expanded>
+                    <div slot="header" class="header-row">
                         <ha-icon icon="mdi:form-select"></ha-icon>
                         <div class="label">Core Entities</div>
                     </div>
-                    <ha-entity-picker
-                        .hass=${this.hass}
-                        .value=${this._config.entity}
-                        .configValue=${'entity'}
-                        @value-changed=${this._valueChanged}
-                        label="Primary Switch (Required)"
-                        allow-custom-entity
-                    ></ha-entity-picker>
-                </div>
+                    <div class="content">
+                        <ha-entity-picker
+                            .hass=${this.hass}
+                            .value=${this._config.entity}
+                            .configValue=${'entity'}
+                            @value-changed=${this._valueChanged}
+                            label="Primary Switch (Required)"
+                            allow-custom-entity
+                        ></ha-entity-picker>
+                    </div>
+                </ha-expansion-panel>
 
-                <div class="section">
-                    <div class="header-row">
+                <ha-expansion-panel expanded>
+                    <div slot="header" class="header-row">
                         <ha-icon icon="mdi:chart-timeline-variant"></ha-icon>
                         <div class="label">Monitoring Sensors</div>
                     </div>
-                    <ha-entity-picker
-                        .hass=${this.hass}
-                        .value=${this._config.power_entity}
-                        .configValue=${'power_entity'}
-                        @value-changed=${this._valueChanged}
-                        label="Power Sensor (W)"
-                        allow-custom-entity
-                    ></ha-entity-picker>
-                    <ha-entity-picker
-                        .hass=${this.hass}
-                        .value=${this._config.energy_today_entity}
-                        .configValue=${'energy_today_entity'}
-                        @value-changed=${this._valueChanged}
-                        label="Energy Today (kWh)"
-                        allow-custom-entity
-                    ></ha-entity-picker>
-                    <div class="grid-2">
+                    <div class="content">
                         <ha-entity-picker
                             .hass=${this.hass}
-                            .value=${this._config.voltage_entity}
-                            .configValue=${'voltage_entity'}
+                            .value=${this._config.power_entity}
+                            .configValue=${'power_entity'}
                             @value-changed=${this._valueChanged}
-                            label="Voltage Sensor (V)"
+                            label="Power Sensor (W)"
                             allow-custom-entity
                         ></ha-entity-picker>
                         <ha-entity-picker
                             .hass=${this.hass}
-                            .value=${this._config.current_entity}
-                            .configValue=${'current_entity'}
+                            .value=${this._config.energy_today_entity}
+                            .configValue=${'energy_today_entity'}
                             @value-changed=${this._valueChanged}
-                            label="Current Sensor (A)"
+                            label="Energy Today (kWh) - Calculated"
                             allow-custom-entity
                         ></ha-entity-picker>
+                        <ha-entity-picker
+                            .hass=${this.hass}
+                            .value=${this._config.total_energy_entity}
+                            .configValue=${'total_energy_entity'}
+                            @value-changed=${this._valueChanged}
+                            label="Today's Energy (kWh) - From Sensor"
+                            allow-custom-entity
+                        ></ha-entity-picker>
+                        <div class="grid-2">
+                            <ha-entity-picker
+                                .hass=${this.hass}
+                                .value=${this._config.voltage_entity}
+                                .configValue=${'voltage_entity'}
+                                @value-changed=${this._valueChanged}
+                                label="Voltage Sensor (V)"
+                                allow-custom-entity
+                            ></ha-entity-picker>
+                            <ha-entity-picker
+                                .hass=${this.hass}
+                                .value=${this._config.current_entity}
+                                .configValue=${'current_entity'}
+                                @value-changed=${this._valueChanged}
+                                label="Current Sensor (A)"
+                                allow-custom-entity
+                            ></ha-entity-picker>
+                        </div>
                     </div>
-                </div>
+                </ha-expansion-panel>
 
                 <div class="section">
                     <div class="header-row">

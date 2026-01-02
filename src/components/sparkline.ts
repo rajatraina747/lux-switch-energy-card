@@ -7,6 +7,7 @@ export class LuxSparkline extends LitElement {
     @property({ type: Array }) samples: PowerSample[] = [];
     @property({ type: Object }) config?: SparklineConfig;
     @property({ type: String }) accentColor: string = '#d6b25e';
+    @property({ type: Boolean }) faded: boolean = false;
 
     static get styles() {
         return css`
@@ -19,12 +20,29 @@ export class LuxSparkline extends LitElement {
                 width: 100%;
                 height: 100%;
                 display: block;
+                transition: opacity 0.3s ease;
+            }
+            svg.faded {
+                opacity: 0.3;
             }
         `;
     }
 
+    // Moving average to smooth out sharp oscillations
+    private movingAverage(samples: PowerSample[], windowSize: number = 3): PowerSample[] {
+        if (samples.length < windowSize) return samples;
+
+        return samples.map((sample, index) => {
+            const start = Math.max(0, index - Math.floor(windowSize / 2));
+            const end = Math.min(samples.length, index + Math.ceil(windowSize / 2));
+            const window = samples.slice(start, end);
+            const avg = window.reduce((sum, s) => sum + s.value, 0) / window.length;
+            return { ...sample, value: avg };
+        });
+    }
+
     // Catmull-Rom spline to SVG cubic bezier
-    private catmullRomToBezier(points: { x: number, y: number }[], tension: number = 0.5): string {
+    private catmullRomToBezier(points: { x: number, y: number }[], tension: number = 1.5): string {
         if (points.length < 2) return '';
 
         let path = `M ${points[0].x} ${points[0].y}`;
@@ -54,26 +72,31 @@ export class LuxSparkline extends LitElement {
             return html``;
         }
 
-        const maxValue = Math.max(...this.samples.map(s => s.value), 0);
-        const minValue = Math.min(...this.samples.map(s => s.value), 0);
+        // Apply moving average smoothing to reduce sharp oscillations
+        const smoothedSamples = this.config?.smoothing !== false
+            ? this.movingAverage(this.samples, 3)
+            : this.samples;
+
+        const maxValue = Math.max(...smoothedSamples.map(s => s.value), 0);
+        const minValue = Math.min(...smoothedSamples.map(s => s.value), 0);
         const range = (maxValue - minValue) || 1;
 
-        const points = this.samples.map((sample, index) => {
-            const x = (index / (this.samples.length - 1)) * width;
+        const points = smoothedSamples.map((sample, index) => {
+            const x = (index / (smoothedSamples.length - 1)) * width;
             const y = height - ((sample.value - minValue) / range) * height;
             return { x, y };
         });
 
-        // Use smooth Catmull-Rom spline instead of straight lines
+        // Use smooth Catmull-Rom spline with high tension
         const smoothPath = this.config?.smoothing !== false
-            ? this.catmullRomToBezier(points)
+            ? this.catmullRomToBezier(points, 1.5)
             : points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
         const areaPath = `${smoothPath} L ${width} ${height} L 0 ${height} Z`;
         const gradientId = `grad-${Math.random().toString(36).substr(2, 9)}`;
 
         return html`
-            <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+            <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" class="${this.faded ? 'faded' : ''}">
                 <defs>
                     <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop offset="0%" style="stop-color:${this.accentColor};stop-opacity:0.25" />

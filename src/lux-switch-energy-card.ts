@@ -218,6 +218,10 @@ export class LuxSwitchEnergyCard extends LitElement {
         return this._config.cost_today_entity ? this.hass.states[this._config.cost_today_entity] : null;
     }
 
+    private getTotalEnergyEntity() {
+        return this._config.total_energy_entity ? this.hass.states[this._config.total_energy_entity] : null;
+    }
+
     private getVoltageEntity() {
         return this._config.voltage_entity ? this.hass.states[this._config.voltage_entity] : null;
     }
@@ -470,6 +474,7 @@ export class LuxSwitchEnergyCard extends LitElement {
         const voltage = this.getVoltage();
         const current = this.getCurrent();
         const energyToday = this.getEnergyTodayEntity();
+        const totalEnergy = this.getTotalEnergyEntity();
         const costToday = this.getCostTodayEntity();
         const timeInfo = this.getTimeDisplay();
 
@@ -509,6 +514,11 @@ export class LuxSwitchEnergyCard extends LitElement {
                 <div class="stat-value">${this.formatNumber(parseFloat(energyToday.state), this._config.decimals?.energy || 2)} kWh</div>
                 <div class="stat-label">${localize('card.today')}</div>
               </div>
+            ` : totalEnergy && totalEnergy.state !== 'unavailable' ? html`
+              <div class="stat-item">
+                <div class="stat-value">${this.formatNumber(parseFloat(totalEnergy.state), this._config.decimals?.energy || 2)} kWh</div>
+                <div class="stat-label">${localize('card.today')}</div>
+              </div>
             ` : ''
             }
             ${costToday && costToday.state !== 'unavailable' ? html`
@@ -526,6 +536,7 @@ export class LuxSwitchEnergyCard extends LitElement {
             .samples=${this._powerSamples} 
                 .config=${this._config.sparkline}
                 .accentColor=${`var(--lux-accent-gold)`}
+                .faded=${!this.isOn()}
             ></lux-sparkline>
         ` : this.renderModalEmptyState(power)}
     </div>
@@ -825,6 +836,7 @@ tabindex="0"
             .samples=${this._powerSamples} 
                 .config=${this._config.sparkline}
                 .accentColor=${`var(--lux-accent-gold)`}
+                .faded=${!this.isOn()}
             ></lux-sparkline>
     </div>
 
