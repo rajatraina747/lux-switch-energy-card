@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.3 (2026-01-02)
+
+### 💎 UX & Design
+- **Visual Restoration**: Fixed a critical regression where card styles were truncated, causing massive icons and loss of layout.
+- **Glassmorphism**: Fully restored backdrop-filter and translucency effects.
+- **Icon Sizing**: Fixed lightbulb icon scaling and pulsing animations.
+
 ## v1.1.2 (2026-01-02)
 
 ### 🐛 Bug Fixes
