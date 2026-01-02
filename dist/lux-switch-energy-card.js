@@ -284,14 +284,14 @@ O.elementStyles = [], O.shadowRootOptions = { mode: "open" }, O[N("elementProper
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const U = globalThis, lt = (s) => s, W = U.trustedTypes, ct = W ? W.createPolicy("lit-html", { createHTML: (s) => s }) : void 0, vt = "$lit$", w = `lit$${Math.random().toFixed(9).slice(2)}$`, $t = "?" + w, Dt = `<${$t}>`, C = document, L = () => C.createComment(""), H = (s) => s === null || typeof s != "object" && typeof s != "function", et = Array.isArray, Nt = (s) => et(s) || typeof (s == null ? void 0 : s[Symbol.iterator]) == "function", Z = `[ 	
+const L = globalThis, lt = (s) => s, W = L.trustedTypes, ct = W ? W.createPolicy("lit-html", { createHTML: (s) => s }) : void 0, vt = "$lit$", w = `lit$${Math.random().toFixed(9).slice(2)}$`, $t = "?" + w, Dt = `<${$t}>`, C = document, U = () => C.createComment(""), H = (s) => s === null || typeof s != "object" && typeof s != "function", et = Array.isArray, Nt = (s) => et(s) || typeof (s == null ? void 0 : s[Symbol.iterator]) == "function", Z = `[ 	
 \f\r]`, D = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ht = /-->/g, dt = />/g, S = RegExp(`>|${Z}(?:([^\\s"'>=/]+)(${Z}*=${Z}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`, "g"), pt = /'/g, ut = /"/g, bt = /^(?:script|style|textarea|title)$/i, Ut = (s) => (t, ...e) => ({ _$litType$: s, strings: t, values: e }), d = Ut(1), k = Symbol.for("lit-noChange"), _ = Symbol.for("lit-nothing"), mt = /* @__PURE__ */ new WeakMap(), E = C.createTreeWalker(C, 129);
+\f\r"'\`<>=]|("|')|))|$)`, "g"), pt = /'/g, ut = /"/g, bt = /^(?:script|style|textarea|title)$/i, Lt = (s) => (t, ...e) => ({ _$litType$: s, strings: t, values: e }), d = Lt(1), k = Symbol.for("lit-noChange"), _ = Symbol.for("lit-nothing"), mt = /* @__PURE__ */ new WeakMap(), E = C.createTreeWalker(C, 129);
 function wt(s, t) {
   if (!et(s) || !s.hasOwnProperty("raw")) throw Error("invalid template strings array");
   return ct !== void 0 ? ct.createHTML(t) : t;
 }
-const Lt = (s, t) => {
+const Ut = (s, t) => {
   const e = s.length - 1, i = [];
   let r, o = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", a = D;
   for (let n = 0; n < e; n++) {
@@ -308,7 +308,7 @@ class R {
     let r;
     this.parts = [];
     let o = 0, a = 0;
-    const n = t.length - 1, l = this.parts, [c, u] = Lt(t, e);
+    const n = t.length - 1, l = this.parts, [c, u] = Ut(t, e);
     if (this.el = R.createElement(c, i), E.currentNode = this.el.content, e === 2 || e === 3) {
       const p = this.el.content.firstChild;
       p.replaceWith(...p.childNodes);
@@ -323,8 +323,8 @@ class R {
           const p = r.textContent.split(w), v = p.length - 1;
           if (v > 0) {
             r.textContent = W ? W.emptyScript : "";
-            for (let m = 0; m < v; m++) r.append(p[m], L()), E.nextNode(), l.push({ type: 2, index: ++o });
-            r.append(p[v], L());
+            for (let m = 0; m < v; m++) r.append(p[m], U()), E.nextNode(), l.push({ type: 2, index: ++o });
+            r.append(p[v], U());
           }
         }
       } else if (r.nodeType === 8) if (r.data === $t) l.push({ type: 2, index: o });
@@ -423,7 +423,7 @@ class z {
     et(this._$AH) || (this._$AH = [], this._$AR());
     const e = this._$AH;
     let i, r = 0;
-    for (const o of t) r === e.length ? e.push(i = new z(this.O(L()), this.O(L()), this, this.options)) : i = e[r], i._$AI(o), r++;
+    for (const o of t) r === e.length ? e.push(i = new z(this.O(U()), this.O(U()), this, this.options)) : i = e[r], i._$AI(o), r++;
     r < e.length && (this._$AR(i && i._$AB.nextSibling, r), e.length = r);
   }
   _$AR(t = this._$AA.nextSibling, e) {
@@ -504,14 +504,14 @@ class zt {
     M(this, t);
   }
 }
-const J = U.litHtmlPolyfillSupport;
-J == null || J(R, z), (U.litHtmlVersions ?? (U.litHtmlVersions = [])).push("3.3.2");
+const J = L.litHtmlPolyfillSupport;
+J == null || J(R, z), (L.litHtmlVersions ?? (L.litHtmlVersions = [])).push("3.3.2");
 const Ft = (s, t, e) => {
   const i = (e == null ? void 0 : e.renderBefore) ?? t;
   let r = i._$litPart$;
   if (r === void 0) {
     const o = (e == null ? void 0 : e.renderBefore) ?? null;
-    i._$litPart$ = r = new z(t.insertBefore(L(), o), o, void 0, e ?? {});
+    i._$litPart$ = r = new z(t.insertBefore(U(), o), o, void 0, e ?? {});
   }
   return r._$AI(s), r;
 };
@@ -952,6 +952,12 @@ var Gt = Object.defineProperty, Qt = Object.getOwnPropertyDescriptor, g = (s, t,
     (a = s[o]) && (r = (i ? a(t, e, r) : a(r)) || r);
   return i && r && Gt(t, e, r), r;
 };
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: "lux-switch-energy-card",
+  name: "Lux Switch Energy Card",
+  description: "A premium glassmorphic switch card with energy monitoring"
+});
 let f = class extends T {
   constructor() {
     super(...arguments), this._showModal = !1, this._sessionEnergy = 0, this._sessionStartTime = null, this._activeTimer = null, this._timerEndTime = null, this._showToast = !1, this._toastMessage = "", this._powerSamples = [], this._sampleInterval = null, this._autoOffDisabled = !1, this._lastOnTime = null, this._lastOffTime = null, this._historyFetched = !1;
