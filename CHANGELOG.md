@@ -1,6 +1,14 @@
 # Changelog
 
-## v1.1.3 (2026-01-02)
+## v1.2.0-beta.1 (2026-01-02)
+
+### 🚀 New Features
+- **GUI Card Editor**: Introduced a full visual configuration editor. No more manual YAML editing required!
+  - **Entity Pickers**: Easily select your switch, power, and energy entities.
+  - **Visual Sliders**: Adjust glass blur, opacity, and line widths in real-time.
+  - **Toggles**: Enable/Disable timers and sparklines via the UI.
+
+
 
 ### 💎 UX & Design
 - **Visual Restoration**: Fixed a critical regression where card styles were truncated, causing massive icons and loss of layout.

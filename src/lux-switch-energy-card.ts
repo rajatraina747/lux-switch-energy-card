@@ -6,6 +6,7 @@ import { localize } from './localize/localize';
 import './components/sparkline';
 import './components/power-flow';
 import { normalizeConfig } from './config-utils';
+import './editor';
 
 
 // Register the card in the generic UI
