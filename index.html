@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lux Switch Energy Card Prediction</title>
+    <style>
+        body {
+            background-color: #1c1c1c;
+            /* Dark background like HA */
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #e1e1e1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+
+        /* Mock card borders or dashboard grid if needed */
+        .dashboard-mock {
+            display: grid;
+            gap: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="dashboard-mock">
+            <lux-switch-energy-card id="test-card"></lux-switch-energy-card>
+        </div>
+    </div>
+
+    <!-- Import the card -->
+    <script type="module" src="/src/lux-switch-energy-card.ts"></script>
+    <script type="module">
+        const card = document.getElementById('test-card');
+
+        // Initial mock state
+        let hassState = {
+            states: {
+                'switch.kitchen_light': {
+                    entity_id: 'switch.kitchen_light',
+                    state: 'on',
+                    attributes: {
+                        friendly_name: 'Kitchen Pendant',
+                    },
+                    last_changed: new Date(Date.now() - 1000 * 60 * 45).toISOString(), // 45 mins ago
+                    last_updated: new Date().toISOString()
+                },
+                'sensor.kitchen_power': {
+                    entity_id: 'sensor.kitchen_power',
+                    state: '12.5',
+                    attributes: { unit_of_measurement: 'W' },
+                    last_updated: new Date().toISOString()
+                },
+                'sensor.kitchen_energy': {
+                    entity_id: 'sensor.kitchen_energy',
+                    state: '1.24',
+                    attributes: { unit_of_measurement: 'kWh' }
+                },
+                'sensor.kitchen_cost': {
+                    entity_id: 'sensor.kitchen_cost',
+                    state: '0.45',
+                    attributes: { unit_of_measurement: '£' }
+                }
+            },
+            callService: async (domain, service, data) => {
+                console.log('Service Call:', domain, service, data);
+                if (domain === 'switch' && (service === 'turn_on' || service === 'turn_off')) {
+                    const newState = service === 'turn_on' ? 'on' : 'off';
+                    const entityId = data.entity_id;
+
+                    // Update mock state
+                    hassState = {
+                        ...hassState,
+                        states: {
+                            ...hassState.states,
+                            [entityId]: {
+                                ...hassState.states[entityId],
+                                state: newState,
+                                last_changed: new Date().toISOString(),
+                                last_updated: new Date().toISOString()
+                            }
+                        }
+                    };
+                    card.hass = hassState;
+                }
+            }
+        };
+
+        // Basic Config
+        const cardConfig = {
+            type: 'custom:lux-switch-energy-card',
+            entity: 'switch.kitchen_light',
+            power_entity: 'sensor.kitchen_power',
+            energy_today_entity: 'sensor.kitchen_energy',
+            cost_today_entity: 'sensor.kitchen_cost',
+            name: 'Kitchen Island',
+            timers: {
+                enabled: true,
+                presets: [5, 15, 30]
+            },
+            sparkline: {
+                enabled: true,
+                samples: 60,
+                interval_sec: 2 // Fast update for demo
+            },
+            modes: {
+                enabled: true,
+                items: [
+                    { label: 'Dinner', icon: 'silverware-fork-knife' },
+                    { label: 'Movie', icon: 'popcorn' }
+                ]
+            }
+        };
+
+        // Initialize
+        card.setConfig(cardConfig);
+        card.hass = hassState;
+
+        // Simulate power fluctuations
+        setInterval(() => {
+            if (hassState.states['switch.kitchen_light'].state === 'on') {
+                const basePower = 12.5;
+                const randomVar = (Math.random() - 0.5) * 2; // +/- 1W
+                const newPower = (basePower + randomVar).toFixed(1);
+
+                hassState = {
+                    ...hassState,
+                    states: {
+                        ...hassState.states,
+                        'sensor.kitchen_power': {
+                            ...hassState.states['sensor.kitchen_power'],
+                            state: newPower
+                        }
+                    }
+                };
+                card.hass = hassState;
+            }
+        }, 2000);
+
+    </script>
+</body>
+
+</html>
